@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>windrunner</artifactId>
+        <groupId>top.songjhh</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>windrunner-core</artifactId>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <gson.version>2.9.0</gson.version>
+        <ognl.version>3.3.2</ognl.version>
+        <common-collection.version>2.0.5</common-collection.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.aventrix.jnanoid</groupId>
+            <artifactId>jnanoid</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>${ognl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cc.ldsd.common</groupId>
+            <artifactId>common-collection</artifactId>
+            <version>${common-collection.version}</version>
+        </dependency>
+    </dependencies>
+
+    <!-- 需要发布二方包 则打开下列的配置-->
+    <distributionManagement>
+        <repository>
+            <id>ldsd-repo</id>
+            <name>Releases</name>
+            <url>http://nexus.leidishidai.com/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ldsd-repo</id>
+            <name>Snapshot</name>
+            <url>http://nexus.leidishidai.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

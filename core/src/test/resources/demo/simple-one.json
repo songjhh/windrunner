@@ -1,0 +1,117 @@
+{
+  "flowElementList": [
+    {
+      "id": "Event_27g0o9s",
+      "name": "aa",
+      "type": "START_EVENT",
+      "incoming": [],
+      "outgoing": [
+        "Flow_3ntt3bg"
+      ],
+      "x": 260,
+      "y": 220,
+      "text": {
+        "x": 260,
+        "y": 220,
+        "value": "aa"
+      }
+    },
+    {
+      "id": "Event_0lc7e2a",
+      "name": "c",
+      "type": "END_EVENT",
+      "incoming": [
+        "Flow_1o5d6e6"
+      ],
+      "outgoing": [],
+      "x": 600,
+      "y": 200,
+      "text": {
+        "x": 600,
+        "y": 200,
+        "value": "c"
+      }
+    },
+    {
+      "id": "Activity_066v79p",
+      "name": "b",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_3ntt3bg"
+      ],
+      "outgoing": [
+        "Flow_1o5d6e6"
+      ],
+      "x": 440,
+      "y": 220,
+      "text": {
+        "x": 440,
+        "y": 220,
+        "value": "b"
+      },
+      "assignee": "1",
+      "properties": {
+      }
+    },
+    {
+      "id": "Flow_3ntt3bg",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Event_27g0o9s",
+      "targetRef": "Activity_066v79p",
+      "text": "",
+      "startPoint": {
+        "x": 278,
+        "y": 220
+      },
+      "endPoint": {
+        "x": 390,
+        "y": 220
+      },
+      "pointsList": [
+        {
+          "x": 278,
+          "y": 220
+        },
+        {
+          "x": 390,
+          "y": 220
+        }
+      ]
+    },
+    {
+      "id": "Flow_1o5d6e6",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_066v79p",
+      "targetRef": "Event_0lc7e2a",
+      "text": "",
+      "startPoint": {
+        "x": 490,
+        "y": 220
+      },
+      "endPoint": {
+        "x": 582,
+        "y": 200
+      },
+      "pointsList": [
+        {
+          "x": 490,
+          "y": 220
+        },
+        {
+          "x": 536,
+          "y": 220
+        },
+        {
+          "x": 536,
+          "y": 200
+        },
+        {
+          "x": 582,
+          "y": 200
+        }
+      ]
+    }
+  ]
+}

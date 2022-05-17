@@ -1,0 +1,300 @@
+{
+  "flowElementList": [
+    {
+      "id": "Event_27g0o9s",
+      "name": "aa",
+      "type": "START_EVENT",
+      "incoming": [
+      ],
+      "outgoing": [
+        "Flow_2h1cddh"
+      ],
+      "x": 125,
+      "y": 286,
+      "text": {
+        "x": 125,
+        "y": 286,
+        "value": "aa"
+      },
+      "properties": {
+      }
+    },
+    {
+      "id": "Event_0lc7e2a",
+      "name": "c",
+      "type": "END_EVENT",
+      "incoming": [
+        "Flow_3fj313k",
+        "Flow_09s0r50"
+      ],
+      "outgoing": [
+      ],
+      "x": 629,
+      "y": 205,
+      "text": {
+        "x": 629,
+        "y": 205,
+        "value": "c"
+      },
+      "properties": {
+      }
+    },
+    {
+      "id": "Activity_22ltmrm",
+      "name": "A任务",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_18pad7f"
+      ],
+      "outgoing": [
+        "Flow_3fj313k"
+      ],
+      "assignee": "A",
+      "x": 435,
+      "y": 141,
+      "text": {
+        "x": 435,
+        "y": 141,
+        "value": "A任务"
+      },
+      "properties": {
+      }
+    },
+    {
+      "id": "Activity_2pjq8hi",
+      "name": "B任务",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_2cvdgak"
+      ],
+      "outgoing": [
+        "Flow_09s0r50"
+      ],
+      "x": 436,
+      "y": 305,
+      "text": {
+        "x": 436,
+        "y": 305,
+        "value": "B任务"
+      },
+      "taskListenerEvents": [
+        {
+          "eventName": "SetAssigneeToStarterTaskListener",
+          "eventType": "CREATE"
+        }
+      ]
+    },
+    {
+      "id": "Activity_3da6t3l",
+      "name": "O任务",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_2h1cddh"
+      ],
+      "outgoing": [
+        "Flow_18pad7f",
+        "Flow_2cvdgak"
+      ],
+      "assignee": "O",
+      "x": 280,
+      "y": 220,
+      "text": {
+        "x": 280,
+        "y": 220,
+        "value": "O任务"
+      },
+      "properties": {
+      }
+    },
+    {
+      "id": "Flow_3fj313k",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_22ltmrm",
+      "targetRef": "Event_0lc7e2a",
+      "properties": {
+      },
+      "text": "",
+      "startPoint": {
+        "x": 485,
+        "y": 141
+      },
+      "endPoint": {
+        "x": 629,
+        "y": 187
+      },
+      "pointsList": [
+        {
+          "x": 485,
+          "y": 141
+        },
+        {
+          "x": 629,
+          "y": 141
+        },
+        {
+          "x": 629,
+          "y": 187
+        }
+      ]
+    },
+    {
+      "id": "Flow_09s0r50",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_2pjq8hi",
+      "targetRef": "Event_0lc7e2a",
+      "properties": {
+      },
+      "text": "",
+      "startPoint": {
+        "x": 486,
+        "y": 305
+      },
+      "endPoint": {
+        "x": 629,
+        "y": 223
+      },
+      "pointsList": [
+        {
+          "x": 486,
+          "y": 305
+        },
+        {
+          "x": 629,
+          "y": 305
+        },
+        {
+          "x": 629,
+          "y": 223
+        }
+      ]
+    },
+    {
+      "id": "Flow_2h1cddh",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Event_27g0o9s",
+      "targetRef": "Activity_3da6t3l",
+      "properties": {
+      },
+      "text": "",
+      "startPoint": {
+        "x": 143,
+        "y": 286
+      },
+      "endPoint": {
+        "x": 230,
+        "y": 220
+      },
+      "pointsList": [
+        {
+          "x": 143,
+          "y": 286
+        },
+        {
+          "x": 173,
+          "y": 286
+        },
+        {
+          "x": 173,
+          "y": 220
+        },
+        {
+          "x": 230,
+          "y": 220
+        }
+      ]
+    },
+    {
+      "id": "Flow_18pad7f",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_3da6t3l",
+      "targetRef": "Activity_22ltmrm",
+      "conditionExpression": "age <= 25",
+      "properties": {
+      },
+      "text": "",
+      "startPoint": {
+        "x": 330,
+        "y": 220
+      },
+      "endPoint": {
+        "x": 385,
+        "y": 141
+      },
+      "pointsList": [
+        {
+          "x": 330,
+          "y": 220
+        },
+        {
+          "x": 360,
+          "y": 220
+        },
+        {
+          "x": 360,
+          "y": 180.5
+        },
+        {
+          "x": 355,
+          "y": 180.5
+        },
+        {
+          "x": 355,
+          "y": 141
+        },
+        {
+          "x": 385,
+          "y": 141
+        }
+      ]
+    },
+    {
+      "id": "Flow_2cvdgak",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_3da6t3l",
+      "targetRef": "Activity_2pjq8hi",
+      "conditionExpression": "age > 25",
+      "properties": {
+      },
+      "text": "",
+      "startPoint": {
+        "x": 330,
+        "y": 220
+      },
+      "endPoint": {
+        "x": 386,
+        "y": 305
+      },
+      "pointsList": [
+        {
+          "x": 330,
+          "y": 220
+        },
+        {
+          "x": 360,
+          "y": 220
+        },
+        {
+          "x": 360,
+          "y": 262.5
+        },
+        {
+          "x": 356,
+          "y": 262.5
+        },
+        {
+          "x": 356,
+          "y": 305
+        },
+        {
+          "x": 386,
+          "y": 305
+        }
+      ]
+    }
+  ]
+}
