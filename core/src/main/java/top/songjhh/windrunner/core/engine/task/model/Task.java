@@ -86,6 +86,10 @@ public class Task {
      * 结束时间
      */
     private LocalDateTime endDateTime;
+    /**
+     * 表单
+     */
+    private String formKey;
 
     private Task(String instanceId, UserTask userTask, Map<String, Object> variables) {
         this.taskId = NanoIdUtils.randomNanoId();
@@ -103,6 +107,7 @@ public class Task {
         this.status = Status.PROCESSING;
         this.variables = Optional.ofNullable(variables).orElse(new HashMap<>());
         this.beginDateTime = LocalDateTime.now();
+        this.formKey = userTask.getFormKey();
     }
 
     public static Task create(String instanceId, UserTask userTask, Map<String, Object> variables) {
