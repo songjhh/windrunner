@@ -1,7 +1,6 @@
 package top.songjhh.windrunner.core.engine.process.model;
 
 import lombok.Getter;
-import top.songjhh.windrunner.core.engine.runtime.model.DefinitionFileType;
 import top.songjhh.windrunner.core.engine.runtime.model.UserEntity;
 
 import java.util.HashMap;
@@ -15,8 +14,6 @@ import java.util.Map;
 public class ProcessInstanceBuilder {
     private String deploymentId;
     private String name;
-    private String source;
-    private DefinitionFileType type;
     private Map<String, Object> variables;
     private String starter;
     private String starterName;
@@ -37,16 +34,6 @@ public class ProcessInstanceBuilder {
 
     public ProcessInstanceBuilder setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public ProcessInstanceBuilder setSource(String source) {
-        this.source = source;
-        return this;
-    }
-
-    public ProcessInstanceBuilder setType(DefinitionFileType type) {
-        this.type = type;
         return this;
     }
 

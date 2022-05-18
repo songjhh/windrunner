@@ -1,6 +1,7 @@
 package top.songjhh.windrunner.core.engine.process.model;
 
 import lombok.Getter;
+import top.songjhh.windrunner.core.engine.deployment.model.Deployment;
 import top.songjhh.windrunner.core.engine.executor.FlowExecutorFactory;
 import top.songjhh.windrunner.core.engine.runtime.converter.FlowModelConvertProvider;
 import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
@@ -24,20 +25,20 @@ public class RuntimeContext {
     @Getter
     private final ProcessInstance processInstance;
 
-    private RuntimeContext(ProcessInstance processInstance) {
+    private RuntimeContext(ProcessInstance processInstance, Deployment deployment) {
         FlowModel model = FlowModelConvertProvider
-                .converterToModel(processInstance.getSource(), processInstance.getType());
+                .converterToModel(deployment.getSource(), deployment.getType());
         this.flowElementMap = model.getFlowElementList().stream()
                 .collect(Collectors.toMap(FlowElement::getId, Function.identity()));
         this.processInstance = processInstance;
     }
 
-    public static RuntimeContext getContextByInstance(ProcessInstance processInstance) {
-        return new RuntimeContext(processInstance);
+    public static RuntimeContext getContextByInstance(ProcessInstance processInstance, Deployment deployment) {
+        return new RuntimeContext(processInstance, deployment);
     }
 
     public RuntimeContext startProcess() {
-        StartEvent startEvent = FlowElementUtils.getStartEvent(processInstance.getSource(), processInstance.getType());
+        StartEvent startEvent = FlowElementUtils.getStartEvent(flowElementMap.values());
         FlowExecutorFactory.getExecutor(startEvent.getType()).doExecute(this, startEvent, null);
         return this;
     }

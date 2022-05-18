@@ -28,8 +28,6 @@ public class ProcessServiceImpl implements ProcessService {
         ProcessInstance processInstance = ProcessInstanceBuilder.builder()
                 .setDeploymentId(deployment.getDeploymentId())
                 .setName(deployment.getName())
-                .setSource(deployment.getSource())
-                .setType(deployment.getType())
                 .setVariables(variables)
                 .setStarter(starter)
                 .build();

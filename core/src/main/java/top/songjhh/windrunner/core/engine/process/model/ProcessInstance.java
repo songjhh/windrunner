@@ -4,7 +4,6 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import top.songjhh.windrunner.core.engine.runtime.model.DefinitionFileType;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -31,14 +30,6 @@ public class ProcessInstance {
      * 名称
      */
     private String name;
-    /**
-     * 流程
-     */
-    private String source;
-    /**
-     * 流程类型
-     */
-    private DefinitionFileType type;
     /**
      * 运行开始时间
      */
@@ -76,8 +67,6 @@ public class ProcessInstance {
         this.instanceId = NanoIdUtils.randomNanoId();
         this.deploymentId = builder.getDeploymentId();
         this.name = builder.getName();
-        this.source = builder.getSource();
-        this.type = builder.getType();
         this.startDateTime = LocalDateTime.now();
         this.currentNodeIds = new HashSet<>();
         this.variables = Optional.ofNullable(builder.getVariables()).orElse(new HashMap<>());

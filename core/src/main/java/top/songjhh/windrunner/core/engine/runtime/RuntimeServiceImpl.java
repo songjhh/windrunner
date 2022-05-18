@@ -45,7 +45,7 @@ public class RuntimeServiceImpl implements RuntimeService {
         }
         ProcessInstance processInstance = processService.startProcessByDeployment(
                 identityService.getEntityByUserId(starter), deployment, variables);
-        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance);
+        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
         return runtimeContext.startProcess();
     }
 
@@ -53,24 +53,32 @@ public class RuntimeServiceImpl implements RuntimeService {
     public RuntimeContext commit(String assignee, String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
-        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance);
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
         return runtimeContext.commit(task.complete(identityService.getEntityByUserId(assignee), variables));
     }
 
     @Override
     public RuntimeContext save(String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
+        ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         taskService.save(task);
-        return RuntimeContext.getContextByInstance(processService.getInstanceById(task.getInstanceId()));
+        return RuntimeContext.getContextByInstance(processInstance, deployment);
     }
 
     @Override
     public <T extends AdvancedPagedQuery> List<RuntimeContext> list(T query) {
-        return processService.list(query).stream().map(RuntimeContext::getContextByInstance).collect(Collectors.toList());
+        return processService.list(query).stream()
+                .map(it -> RuntimeContext.getContextByInstance(
+                        it, deploymentService.getDeploymentById(it.getDeploymentId())))
+                .collect(Collectors.toList());
     }
 
     @Override
     public RuntimeContext getByInstanceId(String instanceId) {
-        return RuntimeContext.getContextByInstance(processService.getInstanceById(instanceId));
+        ProcessInstance processInstance = processService.getInstanceById(instanceId);
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        return RuntimeContext.getContextByInstance(processInstance, deployment);
     }
 }
