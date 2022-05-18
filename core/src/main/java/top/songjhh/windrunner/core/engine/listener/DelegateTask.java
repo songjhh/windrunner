@@ -2,6 +2,7 @@ package top.songjhh.windrunner.core.engine.listener;
 
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
+import top.songjhh.windrunner.core.engine.task.model.Task;
 
 import java.util.Map;
 
@@ -12,10 +13,12 @@ public class DelegateTask {
 
     private final ProcessInstance instance;
     private final UserTask userTask;
+    private final Task task;
 
-    public DelegateTask(ProcessInstance instance, UserTask userTask) {
+    public DelegateTask(ProcessInstance instance, UserTask userTask, Task task) {
         this.instance = instance;
         this.userTask = userTask;
+        this.task = task;
     }
 
     public void addCandidateUsers(String candidateUser, String candidateUserName) {
@@ -47,5 +50,9 @@ public class DelegateTask {
 
     public UserTask getUserTask() {
         return userTask;
+    }
+
+    public Task getTask() {
+        return task;
     }
 }

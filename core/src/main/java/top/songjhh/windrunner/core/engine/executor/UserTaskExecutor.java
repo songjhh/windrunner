@@ -38,10 +38,14 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
             return false;
         }
 
-        notifyTaskEvent(processInstance, userTask, TaskListenerEventType.CREATE);
+        notifyTaskEvent(userTask.getTaskListenerEvents(),
+                new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
 
         Task task = Task.create(processInstance.getInstanceId(), userTask, processInstance.getVariables());
         taskService.save(task);
+
+        notifyTaskEvent(userTask.getTaskListenerEvents(),
+                new DelegateTask(processInstance, userTask, task), TaskListenerEventType.AFTER_CREATE);
 
         processInstance.getCurrentNodeIds().add(userTask.getId());
         processInstance.runNode(userTask.getId());
@@ -54,7 +58,8 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         UserTask userTask = (UserTask) executeElement;
         ProcessInstance processInstance = context.getProcessInstance();
 
-        notifyTaskEvent(processInstance, userTask, TaskListenerEventType.COMPLETE);
+        notifyTaskEvent(userTask.getTaskListenerEvents(),
+                new DelegateTask(processInstance, userTask, task), TaskListenerEventType.COMPLETE);
 
         taskService.save(task);
         processInstance.completeNode(userTask.getId(), task.getVariables());
@@ -63,8 +68,10 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         executeNext(context, userTask.getOutgoing());
     }
 
-    private void notifyTaskEvent(ProcessInstance processInstance, UserTask userTask, TaskListenerEventType eventType) {
-        List<String> eventNames = userTask.getTaskListenerEvents().stream()
+    private void notifyTaskEvent(List<UserTask.TaskListenerEvent> taskListenerEvents,
+                                 DelegateTask delegateTask,
+                                 TaskListenerEventType eventType) {
+        List<String> eventNames = taskListenerEvents.stream()
                 .filter(it -> eventType.equals(it.getEventType()))
                 .map(UserTask.TaskListenerEvent::getEventName).collect(Collectors.toList());
         for (String eventName : eventNames) {
@@ -74,7 +81,7 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
                 continue;
             }
             try {
-                listener.notify(new DelegateTask(processInstance, userTask));
+                listener.notify(delegateTask);
             } catch (Exception e) {
                 log.warn("can not find task listener by event name: " + eventName);
             }

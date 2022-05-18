@@ -5,8 +5,6 @@ package top.songjhh.windrunner.core.engine.listener;
  */
 public enum TaskListenerEventType {
     CREATE,
+    AFTER_CREATE,
     COMPLETE,
-    UPDATE,
-    DELETE,
-    TIMEOUT
 }
