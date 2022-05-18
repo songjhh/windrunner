@@ -3,6 +3,7 @@ package top.songjhh.windrunner.core.engine.task;
 import cc.ldsd.common.bean.web.AdvancedPagedQuery;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.engine.task.repository.TaskRepository;
+import top.songjhh.windrunner.core.exception.NotFoundTaskException;
 
 import java.util.List;
 
@@ -29,7 +30,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task getById(String taskId) {
-        return taskRepository.getById(taskId);
+        Task task = taskRepository.getById(taskId);
+        if (task == null) {
+            throw new NotFoundTaskException(taskId);
+        }
+        return task;
     }
 
     @Override

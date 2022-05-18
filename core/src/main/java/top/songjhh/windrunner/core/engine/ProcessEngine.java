@@ -1,6 +1,7 @@
 package top.songjhh.windrunner.core.engine;
 
 import top.songjhh.windrunner.core.engine.deployment.DeploymentService;
+import top.songjhh.windrunner.core.engine.identity.IdentityService;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
 import top.songjhh.windrunner.core.engine.runtime.RuntimeService;
 import top.songjhh.windrunner.core.engine.task.TaskService;
@@ -15,6 +16,8 @@ public interface ProcessEngine {
     ProcessService getProcessService();
 
     TaskService getTaskService();
+
+    IdentityService getIdentityService();
 
     RuntimeService getRuntimeService();
 

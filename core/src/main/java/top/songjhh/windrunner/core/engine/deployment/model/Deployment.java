@@ -3,11 +3,9 @@ package top.songjhh.windrunner.core.engine.deployment.model;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.Getter;
 import lombok.Setter;
-import top.songjhh.windrunner.core.engine.runtime.converter.FlowModelConvertProvider;
 import top.songjhh.windrunner.core.engine.runtime.model.DefinitionFileType;
-import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
 import top.songjhh.windrunner.core.engine.runtime.model.StartEvent;
-import top.songjhh.windrunner.core.exception.FlowElementCastException;
+import top.songjhh.windrunner.core.util.FlowElementUtils;
 
 import java.time.LocalDateTime;
 
@@ -48,26 +46,22 @@ public class Deployment {
     public Deployment() {
         this.deploymentId = NanoIdUtils.randomNanoId();
         this.deploymentDateTime = LocalDateTime.now();
-        this.status = Status.DEPLOY;
+        this.status = Status.DEPLOYED;
     }
 
-    public StartEvent getStartEvent() {
-        for (FlowElement flowElement : FlowModelConvertProvider.converterToModel(source, type).getFlowElementList()) {
-            if (FlowElement.Type.START_EVENT.equals(flowElement.getType())) {
-                if (!(flowElement instanceof StartEvent)) {
-                    throw new FlowElementCastException(StartEvent.class);
-                }
-                return (StartEvent) flowElement;
-            }
-        }
-        return null;
+    public StartEvent findStartEvent() {
+        return FlowElementUtils.getStartEvent(source, type);
+    }
+
+    public void suspend() {
+        this.status = Status.SUSPEND;
     }
 
     public enum Status {
         /**
          * 已部署
          */
-        DEPLOY,
+        DEPLOYED,
         /**
          * 暂停
          */

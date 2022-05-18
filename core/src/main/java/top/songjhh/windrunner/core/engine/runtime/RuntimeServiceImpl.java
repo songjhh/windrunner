@@ -9,6 +9,7 @@ import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
+import top.songjhh.windrunner.core.exception.DeploymentNotDeployException;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class RuntimeServiceImpl implements RuntimeService {
                                                      String deploymentId,
                                                      Map<String, Object> variables) {
         Deployment deployment = deploymentService.getDeploymentById(deploymentId);
+        if (!Deployment.Status.DEPLOYED.equals(deployment.getStatus())) {
+            throw new DeploymentNotDeployException();
+        }
         ProcessInstance processInstance = processService.startProcessByDeployment(
                 identityService.getEntityByUserId(starter), deployment, variables);
         RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance);
@@ -56,12 +60,8 @@ public class RuntimeServiceImpl implements RuntimeService {
     @Override
     public RuntimeContext save(String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
-        ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
-        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance);
-        runtimeContext.updateVariables(variables);
         taskService.save(task);
-        processService.save(runtimeContext.getProcessInstance());
-        return runtimeContext;
+        return RuntimeContext.getContextByInstance(processService.getInstanceById(task.getInstanceId()));
     }
 
     @Override

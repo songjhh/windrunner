@@ -14,7 +14,7 @@ public class FlowModelConvertProvider {
 
     public static FlowModel converterToModel(String source, DefinitionFileType type) {
         if (DefinitionFileType.WIND_RUNNER_JSON.equals(type)) {
-            return new WindRunnerJsonFlowModelConverter().convertToModel(source);
+            return WindRunnerJsonFlowModelConverter.convertToModel(source);
         }
         throw new FlowConverterException(type);
     }

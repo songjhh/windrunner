@@ -42,6 +42,11 @@ public class BpmnProcessEngine implements ProcessEngine {
     }
 
     @Override
+    public IdentityService getIdentityService() {
+        return this.identityService;
+    }
+
+    @Override
     public RuntimeService getRuntimeService() {
         return this.runtimeService;
     }

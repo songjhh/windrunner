@@ -1,6 +1,6 @@
 package top.songjhh.windrunner.core.engine.identity;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,6 +14,6 @@ public class LocalIdentityServiceImpl implements IdentityService {
 
     @Override
     public List<String> listPlatformsByUser(String user) {
-        return Collections.singletonList("测试单位");
+        return new ArrayList<>();
     }
 }

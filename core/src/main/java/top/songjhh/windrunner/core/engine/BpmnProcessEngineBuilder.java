@@ -65,6 +65,17 @@ public class BpmnProcessEngineBuilder {
     }
 
     public BpmnProcessEngine build() {
+        setLocalImplementIfNull();
+        createFlowExecutorFactory();
+        return new BpmnProcessEngine(deploymentService, processService, taskService,
+                createRuntimeService(), identityService);
+    }
+
+    private void createFlowExecutorFactory() {
+        FlowExecutorFactory.create(processService, taskService, identityService);
+    }
+
+    private void setLocalImplementIfNull() {
         if (deploymentService == null) {
             this.deploymentService = new DeploymentServiceImpl(new LocalDeploymentRepository());
         }
@@ -77,10 +88,10 @@ public class BpmnProcessEngineBuilder {
         if (identityService == null) {
             this.identityService = new LocalIdentityServiceImpl();
         }
-        RuntimeService runtimeService =
-                new RuntimeServiceImpl(deploymentService, processService, taskService, identityService);
-        FlowExecutorFactory.create(processService, taskService, identityService);
-        return new BpmnProcessEngine(deploymentService, processService, taskService, runtimeService, identityService);
+    }
+
+    private RuntimeService createRuntimeService() {
+        return new RuntimeServiceImpl(deploymentService, processService, taskService, identityService);
     }
 
 }

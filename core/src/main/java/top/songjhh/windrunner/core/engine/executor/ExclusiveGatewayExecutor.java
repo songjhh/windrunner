@@ -8,6 +8,7 @@ import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
 import top.songjhh.windrunner.core.engine.runtime.model.SequenceFlow;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
+import top.songjhh.windrunner.core.util.ConditionExpressionUtils;
 
 import java.util.List;
 
@@ -25,6 +26,11 @@ public class ExclusiveGatewayExecutor extends AbstractFlowNodeExecutor {
     @Override
     public boolean preExecute(RuntimeContext context, FlowElement executeElement, SequenceFlow incomingSequenceFlow) {
         ExclusiveGateway exclusiveGateway = (ExclusiveGateway) executeElement;
+        if (!ConditionExpressionUtils.validCondition(incomingSequenceFlow.getConditionExpression(),
+                context.getProcessInstance().getVariables())) {
+            return false;
+        }
+        
         List<SequenceFlow> nextSequenceFlowList = context.findNextSequenceFlows(exclusiveGateway.getOutgoing());
         for (SequenceFlow nextSequenceFlow : nextSequenceFlowList) {
             FlowElement nextFlowNode = context.findNextFlowNode(nextSequenceFlow);

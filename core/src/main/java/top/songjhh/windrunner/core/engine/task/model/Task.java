@@ -127,7 +127,7 @@ public class Task {
             this.assigneeName = assignee.getName();
             if (StringUtils.isEmpty(this.owner)) {
                 this.owner = assignee.getId();
-                this.owner = assignee.getName();
+                this.ownerName = assignee.getName();
             }
         }
         this.endDateTime = LocalDateTime.now();

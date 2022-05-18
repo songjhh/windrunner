@@ -1,5 +1,6 @@
 package top.songjhh.windrunner.core.engine;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import top.songjhh.windrunner.core.engine.deployment.model.Deployment;
@@ -18,6 +19,7 @@ import java.util.Map;
 /**
  * Created by @author songjhh
  */
+@Slf4j
 class ProcessEngineTest {
 
     /**

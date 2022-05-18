@@ -6,6 +6,7 @@ import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstanceBuilder;
 import top.songjhh.windrunner.core.engine.process.repository.ProcessInstanceRepository;
 import top.songjhh.windrunner.core.engine.runtime.model.UserEntity;
+import top.songjhh.windrunner.core.exception.NotFoundProcessInstanceException;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,11 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public ProcessInstance getInstanceById(String instanceId) {
-        return processInstanceRepository.getInstanceById(instanceId);
+        ProcessInstance processInstance = processInstanceRepository.getInstanceById(instanceId);
+        if (processInstance == null) {
+            throw new NotFoundProcessInstanceException(instanceId);
+        }
+        return processInstance;
     }
 
     @Override

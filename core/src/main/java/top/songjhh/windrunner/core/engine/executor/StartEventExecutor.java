@@ -9,8 +9,6 @@ import top.songjhh.windrunner.core.engine.runtime.model.StartEvent;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 
-import java.util.List;
-
 /**
  * @author songjhh
  */
@@ -28,10 +26,6 @@ public class StartEventExecutor extends AbstractFlowNodeExecutor {
     @Override
     public void doExecute(RuntimeContext context, FlowElement executeElement, Task task) {
         StartEvent startEvent = (StartEvent) executeElement;
-        List<SequenceFlow> nextSequenceFlowList = context.findNextSequenceFlows(startEvent.getOutgoing());
-        for (SequenceFlow sequenceFlow : nextSequenceFlowList) {
-            FlowElement nextFlowNode = context.findNextFlowNode(sequenceFlow);
-            FlowExecutorFactory.getExecutor(nextFlowNode.getType()).preExecute(context, nextFlowNode, sequenceFlow);
-        }
+        executeNext(context, startEvent.getOutgoing());
     }
 }
