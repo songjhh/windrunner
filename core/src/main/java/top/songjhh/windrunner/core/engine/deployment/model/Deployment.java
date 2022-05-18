@@ -21,7 +21,7 @@ public class Deployment {
     /**
      * 实例id
      */
-    private final String deploymentId;
+    private String deploymentId;
     /**
      * 名称
      */
@@ -29,7 +29,7 @@ public class Deployment {
     /**
      * 部署时间
      */
-    private final LocalDateTime deploymentDateTime;
+    private LocalDateTime deploymentDateTime;
     /**
      * 流程
      */
@@ -43,10 +43,12 @@ public class Deployment {
      */
     private Deployment.Status status;
 
-    public Deployment() {
-        this.deploymentId = NanoIdUtils.randomNanoId();
-        this.deploymentDateTime = LocalDateTime.now();
-        this.status = Status.DEPLOYED;
+    public static Deployment createDeployment() {
+        Deployment deployment = new Deployment();
+        deployment.setDeploymentId(NanoIdUtils.randomNanoId());
+        deployment.setDeploymentDateTime(LocalDateTime.now());
+        deployment.setStatus(Status.DEPLOYED);
+        return deployment;
     }
 
     public StartEvent findStartEvent() {

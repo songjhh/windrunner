@@ -13,7 +13,7 @@ public class DeploymentBuilder {
 
     private DeploymentBuilder(DeploymentService deploymentService) {
         this.deploymentService = deploymentService;
-        this.deployment = new Deployment();
+        this.deployment = Deployment.createDeployment();
     }
 
     public static DeploymentBuilder build(DeploymentService deploymentService) {
