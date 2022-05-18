@@ -19,7 +19,6 @@ import java.util.Map;
 /**
  * Created by @author songjhh
  */
-@Slf4j
 class ProcessEngineTest {
 
     /**
