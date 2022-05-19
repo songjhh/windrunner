@@ -1,5 +1,6 @@
 package top.songjhh.windrunner.core.engine.process.model;
 
+import cc.ldsd.common.annotation.JacksonDateTimeFormat2Slash;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +34,12 @@ public class ProcessInstance {
     /**
      * 运行开始时间
      */
+    @JacksonDateTimeFormat2Slash
     private LocalDateTime startDateTime;
     /**
      * 运行结束时间
      */
+    @JacksonDateTimeFormat2Slash
     private LocalDateTime endDateTime;
     /**
      * 当前运行到的节点

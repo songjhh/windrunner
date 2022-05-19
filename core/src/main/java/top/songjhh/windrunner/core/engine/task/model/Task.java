@@ -1,5 +1,6 @@
 package top.songjhh.windrunner.core.engine.task.model;
 
+import cc.ldsd.common.annotation.JacksonDateTimeFormat2Slash;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -81,10 +82,12 @@ public class Task {
     /**
      * 开始时间
      */
+    @JacksonDateTimeFormat2Slash
     private LocalDateTime beginDateTime;
     /**
      * 结束时间
      */
+    @JacksonDateTimeFormat2Slash
     private LocalDateTime endDateTime;
     /**
      * 表单

@@ -1,5 +1,6 @@
 package top.songjhh.windrunner.core.engine.deployment.model;
 
+import cc.ldsd.common.annotation.JacksonDateTimeFormat2Slash;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,7 @@ public class Deployment {
     /**
      * 部署时间
      */
+    @JacksonDateTimeFormat2Slash
     private LocalDateTime deploymentDateTime;
     /**
      * 流程
