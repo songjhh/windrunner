@@ -41,7 +41,7 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         notifyTaskEvent(userTask.getTaskListenerEvents(),
                 new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
 
-        Task task = Task.create(processInstance.getInstanceId(), userTask, processInstance.getVariables());
+        Task task = Task.create(processInstance, userTask);
         taskService.save(task);
 
         notifyTaskEvent(userTask.getTaskListenerEvents(),

@@ -5,6 +5,7 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.runtime.model.UserEntity;
 import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
 import top.songjhh.windrunner.core.util.StringUtils;
@@ -93,10 +94,28 @@ public class Task {
      * 表单
      */
     private String formKey;
+    /**
+     * 发起者
+     */
+    private String starter;
+    /**
+     * 发起者名称
+     */
+    private String starterName;
+    /**
+     * 发起者所在单位
+     */
+    private List<String> starterPlatforms;
+    /**
+     * 流程开始时间
+     */
+    @JacksonDateTimeFormat2Slash
+    private LocalDateTime startDateTime;
 
-    private Task(String instanceId, UserTask userTask, Map<String, Object> variables) {
+
+    private Task(ProcessInstance processInstance, UserTask userTask) {
         this.taskId = NanoIdUtils.randomNanoId();
-        this.instanceId = instanceId;
+        this.instanceId = processInstance.getInstanceId();
         this.nodeId = userTask.getId();
         this.owner = userTask.getAssignee();
         this.ownerName = userTask.getAssigneeName();
@@ -108,13 +127,17 @@ public class Task {
         this.participantNames = userTask.getParticipantNames();
         this.name = userTask.getName();
         this.status = Status.PROCESSING;
-        this.variables = Optional.ofNullable(variables).orElse(new HashMap<>());
+        this.variables = Optional.ofNullable(processInstance.getVariables()).orElse(new HashMap<>());
         this.beginDateTime = LocalDateTime.now();
         this.formKey = userTask.getFormKey();
+        this.starter = processInstance.getStarter();
+        this.starterName = processInstance.getStarterName();
+        this.starterPlatforms = processInstance.getStarterPlatforms();
+        this.startDateTime = processInstance.getStartDateTime();
     }
 
-    public static Task create(String instanceId, UserTask userTask, Map<String, Object> variables) {
-        return new Task(instanceId, userTask, variables);
+    public static Task create(ProcessInstance processInstance, UserTask userTask) {
+        return new Task(processInstance, userTask);
     }
 
     public Task complete(UserEntity assignee, Map<String, Object> variables) {
