@@ -61,6 +61,7 @@ public class RuntimeServiceImpl implements RuntimeService {
     @Override
     public RuntimeContext save(String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
+        task.setVariables(variables);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         taskService.save(task);
