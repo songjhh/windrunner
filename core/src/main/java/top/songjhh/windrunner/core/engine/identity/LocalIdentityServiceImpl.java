@@ -16,4 +16,9 @@ public class LocalIdentityServiceImpl implements IdentityService {
     public List<String> listPlatformsByUser(String user) {
         return new ArrayList<>();
     }
+
+    @Override
+    public List<String> getDepartmentByUserId(String userId) {
+        return new ArrayList<>();
+    }
 }

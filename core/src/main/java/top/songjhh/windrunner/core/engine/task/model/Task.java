@@ -107,6 +107,10 @@ public class Task {
      */
     private List<String> starterPlatforms;
     /**
+     * 发起者所在部门
+     */
+    private List<String> starterDepartments;
+    /**
      * 流程开始时间
      */
     @JacksonDateTimeFormat2Slash
@@ -133,6 +137,7 @@ public class Task {
         this.starter = processInstance.getStarter();
         this.starterName = processInstance.getStarterName();
         this.starterPlatforms = processInstance.getStarterPlatforms();
+        this.starterDepartments = processInstance.getStarterDepartments();
         this.startDateTime = processInstance.getStartDateTime();
     }
 

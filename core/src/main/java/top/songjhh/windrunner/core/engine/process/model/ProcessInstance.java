@@ -65,6 +65,10 @@ public class ProcessInstance {
      * 发起者所在单位
      */
     private List<String> starterPlatforms;
+    /**
+     * 发起者所在部门
+     */
+    private List<String> starterDepartments;
 
     protected ProcessInstance(ProcessInstanceBuilder builder) {
         this.instanceId = NanoIdUtils.randomNanoId();
@@ -77,6 +81,7 @@ public class ProcessInstance {
         this.starter = builder.getStarter();
         this.starterName = builder.getStarterName();
         this.starterPlatforms = builder.getStarterPlatforms();
+        this.starterDepartments = builder.getStarterDepartments();
     }
 
     public void runNode(String nodeId) {

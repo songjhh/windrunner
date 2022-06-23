@@ -18,6 +18,7 @@ public class ProcessInstanceBuilder {
     private String starter;
     private String starterName;
     private List<String> starterPlatforms;
+    private List<String> starterDepartments;
 
     private ProcessInstanceBuilder() {
         this.variables = new HashMap<>();
@@ -46,6 +47,7 @@ public class ProcessInstanceBuilder {
         this.starter = starter.getId();
         this.starterName = starter.getName();
         this.starterPlatforms = starter.getPlatforms();
+        this.starterDepartments = starter.getDepartments();
         return this;
     }
 

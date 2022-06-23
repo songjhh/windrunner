@@ -19,5 +19,5 @@ public class UserEntity {
     private String id;
     private String name;
     private List<String> platforms;
-
+    private List<String> departments;
 }
