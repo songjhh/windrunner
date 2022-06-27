@@ -1,5 +1,6 @@
 package top.songjhh.windrunner.core.engine.process.model;
 
+import com.google.common.base.Strings;
 import lombok.Getter;
 import top.songjhh.windrunner.core.engine.deployment.model.Deployment;
 import top.songjhh.windrunner.core.engine.executor.FlowExecutorFactory;
@@ -11,8 +12,10 @@ import top.songjhh.windrunner.core.engine.runtime.model.StartEvent;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.util.FlowElementUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -78,5 +81,15 @@ public class RuntimeContext {
     public List<String> getCurrentNodeNames() {
         return processInstance.getCurrentNodeIds().stream()
                 .map(flowElementMap::get).map(FlowElement::getName).collect(Collectors.toList());
+    }
+
+    public Set<String> getNodeIdsByName(String name) {
+        if (Strings.isNullOrEmpty(name)) {
+            return new HashSet<>();
+        }
+        return flowElementMap.values().stream()
+                .filter(node -> FlowElement.Type.USER_TASK.equals(node.getType()))
+                .filter(node -> name.equals(node.getName()))
+                .map(FlowElement::getId).collect(Collectors.toSet());
     }
 }
