@@ -29,6 +29,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public void deleteByInstanceId(String instanceId) {
+        taskRepository.deleteByInstanceId(instanceId);
+    }
+
+    @Override
     public Task getById(String taskId) {
         Task task = taskRepository.getById(taskId);
         if (task == null) {

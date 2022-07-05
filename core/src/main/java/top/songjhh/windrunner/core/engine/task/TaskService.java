@@ -51,4 +51,12 @@ public interface TaskService {
 
     List<Task> listCurrentTasksByUser(String owner, String instanceId);
 
+
+    /**
+     * 删除指定流程的所有任务
+     *
+     * @param instanceId 流程Id
+     */
+    void deleteByInstanceId(String instanceId);
+
 }

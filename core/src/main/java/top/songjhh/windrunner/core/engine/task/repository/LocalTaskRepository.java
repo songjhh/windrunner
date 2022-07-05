@@ -1,13 +1,11 @@
 package top.songjhh.windrunner.core.engine.task.repository;
 
 import cc.ldsd.common.bean.web.AdvancedPagedQuery;
+import com.google.common.base.Strings;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +40,21 @@ public class LocalTaskRepository implements TaskRepository {
             }
         }
         return result;
+    }
+
+    @Override
+    public void deleteByInstanceId(String instanceId) {
+        if (Strings.isNullOrEmpty(instanceId)) {
+            return;
+        }
+        Iterator<Map.Entry<String, Task>> iterator = taskMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Task> next = iterator.next();
+            Task task = next.getValue();
+            if (instanceId.equals(task.getInstanceId())) {
+                iterator.remove();
+            }
+        }
     }
 
     @Override

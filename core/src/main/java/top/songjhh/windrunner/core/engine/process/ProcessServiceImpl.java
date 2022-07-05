@@ -59,4 +59,11 @@ public class ProcessServiceImpl implements ProcessService {
         return processInstanceRepository.count(query);
     }
 
+
+    @Override
+    public void deleteById(String instanceId) {
+        processInstanceRepository.deleteById(instanceId);
+    }
+
+
 }

@@ -41,4 +41,11 @@ public interface ProcessInstanceRepository {
      */
     <T extends AdvancedPagedQuery> long count(T query);
 
+    /**
+     * 删除流程
+     *
+     * @param instanceId 流程Id
+     */
+    void deleteById(String instanceId);
+
 }

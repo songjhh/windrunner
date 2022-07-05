@@ -50,4 +50,12 @@ public interface TaskRepository {
     <T extends AdvancedPagedQuery> long count(T query);
 
     List<Task> listCurrentTasksByUser(String user, String instanceId);
+
+
+    /**
+     * 删除指定流程的所有任务
+     *
+     * @param instanceId 流程Id
+     */
+    void deleteByInstanceId(String instanceId);
 }

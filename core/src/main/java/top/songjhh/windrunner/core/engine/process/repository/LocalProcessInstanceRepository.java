@@ -39,4 +39,9 @@ public class LocalProcessInstanceRepository implements ProcessInstanceRepository
     public <T extends AdvancedPagedQuery> long count(T query) {
         return 0;
     }
+
+    @Override
+    public void deleteById(String instanceId) {
+        processInstanceMap.remove(instanceId);
+    }
 }

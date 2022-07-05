@@ -54,4 +54,11 @@ public interface ProcessService {
      */
     <T extends AdvancedPagedQuery> long count(T query);
 
+    /**
+     * 删除流程
+     *
+     * @param instanceId
+     */
+    void deleteById(String instanceId);
+
 }
