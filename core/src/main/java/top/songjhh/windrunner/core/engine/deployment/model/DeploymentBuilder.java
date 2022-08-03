@@ -11,13 +11,17 @@ public class DeploymentBuilder {
     private final DeploymentService deploymentService;
     private final Deployment deployment;
 
-    private DeploymentBuilder(DeploymentService deploymentService) {
+    private DeploymentBuilder(DeploymentService deploymentService, String deploymentId) {
         this.deploymentService = deploymentService;
-        this.deployment = Deployment.createDeployment();
+        this.deployment = Deployment.createDeployment(deploymentId);
     }
 
     public static DeploymentBuilder build(DeploymentService deploymentService) {
-        return new DeploymentBuilder(deploymentService);
+        return new DeploymentBuilder(deploymentService, null);
+    }
+
+    public static DeploymentBuilder build(DeploymentService deploymentService, String deploymentId) {
+        return new DeploymentBuilder(deploymentService, deploymentId);
     }
 
     public DeploymentBuilder setName(String name) {
@@ -40,6 +44,13 @@ public class DeploymentBuilder {
     }
 
     public Deployment deploy() {
+        this.deployment.deployed();
+        deploymentService.save(this);
+        return deployment;
+    }
+
+    public Deployment draft() {
+        this.deployment.draft();
         deploymentService.save(this);
         return deployment;
     }

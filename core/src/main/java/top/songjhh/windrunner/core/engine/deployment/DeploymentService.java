@@ -15,6 +15,10 @@ public interface DeploymentService {
         return DeploymentBuilder.build(this);
     }
 
+    default DeploymentBuilder createDeployment(String deploymentId) {
+        return DeploymentBuilder.build(this, deploymentId);
+    }
+
     /**
      * 保存
      *

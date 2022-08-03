@@ -9,6 +9,7 @@ import top.songjhh.windrunner.core.engine.runtime.model.StartEvent;
 import top.songjhh.windrunner.core.util.FlowElementUtils;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * 部署实例
@@ -45,11 +46,10 @@ public class Deployment {
      */
     private Deployment.Status status;
 
-    public static Deployment createDeployment() {
+    public static Deployment createDeployment(String deploymentId) {
         Deployment deployment = new Deployment();
-        deployment.setDeploymentId(NanoIdUtils.randomNanoId());
+        deployment.setDeploymentId(Optional.ofNullable(deploymentId).orElse(NanoIdUtils.randomNanoId()));
         deployment.setDeploymentDateTime(LocalDateTime.now());
-        deployment.setStatus(Status.DEPLOYED);
         return deployment;
     }
 
@@ -61,6 +61,14 @@ public class Deployment {
         this.status = Status.SUSPEND;
     }
 
+    public void deployed() {
+        this.status = Status.DEPLOYED;
+    }
+
+    public void draft() {
+        this.status = Status.DRAFT;
+    }
+
     public enum Status {
         /**
          * 已部署
@@ -69,6 +77,10 @@ public class Deployment {
         /**
          * 暂停
          */
-        SUSPEND
+        SUSPEND,
+        /**
+         * 草稿
+         */
+        DRAFT
     }
 }
