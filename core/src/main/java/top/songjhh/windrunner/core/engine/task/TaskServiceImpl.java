@@ -56,4 +56,9 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> listTasksByInstanceId(String instanceId) {
         return taskRepository.listTasksByInstanceId(instanceId);
     }
+
+    @Override
+    public List<Task> listTasksByInstanceIdAndNodeId(String instanceId, String nodeId) {
+        return taskRepository.listTasksByInstanceIdAndNodeId(instanceId, nodeId);
+    }
 }

@@ -68,8 +68,14 @@ public class LocalTaskRepository implements TaskRepository {
     }
 
     @Override
+    public List<Task> listTasksByInstanceIdAndNodeId(String instanceId, String nodeId) {
+        return taskMap.values().stream().filter(it -> instanceId.equals(it.getInstanceId()) && nodeId.equals(it.getNodeId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public <T extends AdvancedPagedQuery> List<Task> list(T query) {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

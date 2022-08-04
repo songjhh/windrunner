@@ -34,6 +34,15 @@ public interface TaskService {
     List<Task> listTasksByInstanceId(String instanceId);
 
     /**
+     * 获取运行实例以及节点的任务列表
+     *
+     * @param instanceId 流程实例id
+     * @param nodeId     节点id
+     * @return 任务列表
+     */
+    List<Task> listTasksByInstanceIdAndNodeId(String instanceId, String nodeId);
+
+    /**
      * 查询任务列表
      *
      * @param query 查询条件
@@ -49,8 +58,14 @@ public interface TaskService {
      */
     <T extends AdvancedPagedQuery> long count(T query);
 
-    List<Task> listCurrentTasksByUser(String owner, String instanceId);
-
+    /**
+     * 获取人员的任务
+     *
+     * @param user       人员
+     * @param instanceId 实例id
+     * @return 任务列表
+     */
+    List<Task> listCurrentTasksByUser(String user, String instanceId);
 
     /**
      * 删除指定流程的所有任务

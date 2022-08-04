@@ -9,6 +9,7 @@ import top.songjhh.windrunner.core.engine.listener.TaskListenerFactory;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
+import top.songjhh.windrunner.core.engine.runtime.model.FlowActivity;
 import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
 import top.songjhh.windrunner.core.engine.runtime.model.SequenceFlow;
 import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
@@ -16,6 +17,7 @@ import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.util.ConditionExpressionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,11 +43,9 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         notifyTaskEvent(userTask.getTaskListenerEvents(),
                 new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
 
-        Task task = Task.create(processInstance, userTask);
-        taskService.save(task);
-
-        notifyTaskEvent(userTask.getTaskListenerEvents(),
-                new DelegateTask(processInstance, userTask, task), TaskListenerEventType.AFTER_CREATE);
+        List<Task> tasks = this.createTasks(processInstance, userTask);
+        tasks.forEach(task -> notifyTaskEvent(userTask.getTaskListenerEvents(),
+                new DelegateTask(processInstance, userTask, task), TaskListenerEventType.AFTER_CREATE));
 
         processInstance.getCurrentNodeIds().add(userTask.getId());
         processInstance.runNode(userTask.getId());
@@ -62,10 +62,11 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
                 new DelegateTask(processInstance, userTask, task), TaskListenerEventType.COMPLETE);
 
         taskService.save(task);
-        processInstance.completeNode(userTask.getId(), task.getVariables());
-        processService.save(processInstance);
 
-        executeNext(context, userTask.getOutgoing());
+        boolean canExecuteNext = this.updateProcessInstanceAndCheckLoop(userTask, processInstance, task);
+        if (canExecuteNext) {
+            executeNext(context, userTask.getOutgoing());
+        }
     }
 
     private void notifyTaskEvent(List<UserTask.TaskListenerEvent> taskListenerEvents,
@@ -88,4 +89,52 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         }
     }
 
+    private List<Task> createTasks(ProcessInstance processInstance, UserTask userTask) {
+        List<Task> result = new ArrayList<>();
+        FlowActivity.MultiInstanceLoopCharacteristics characteristics =
+                userTask.getMultiInstanceLoopCharacteristics();
+        if (FlowActivity.MultiInstanceLoopCharacteristics.PARALLEL.equals(characteristics)) {
+            for (int i = 0; i < userTask.getCandidateUsers().size(); i++) {
+                userTask.setAssignee(userTask.getCandidateUsers().get(i));
+                userTask.setAssigneeName(userTask.getCandidateUserNames().get(i));
+                Task task = Task.create(processInstance, userTask);
+                taskService.save(task);
+                result.add(task);
+            }
+        } else {
+            Task task = Task.create(processInstance, userTask);
+            taskService.save(task);
+            result.add(task);
+        }
+        return result;
+    }
+
+    private boolean updateProcessInstanceAndCheckLoop(UserTask userTask, ProcessInstance processInstance, Task task) {
+        FlowActivity.MultiInstanceLoopCharacteristics characteristics =
+                userTask.getMultiInstanceLoopCharacteristics();
+        if (FlowActivity.MultiInstanceLoopCharacteristics.PARALLEL.equals(characteristics)) {
+            boolean finishCondition = this.checkFinishCondition(processInstance.getInstanceId(), userTask.getId());
+            if (finishCondition) {
+                processInstance.completeNode(userTask.getId(), task.getVariables());
+            } else {
+                processInstance.putAllVariables(task.getVariables());
+            }
+            processService.save(processInstance);
+            return finishCondition;
+        } else {
+            processInstance.completeNode(userTask.getId(), task.getVariables());
+            processService.save(processInstance);
+            return true;
+        }
+    }
+
+    private boolean checkFinishCondition(String instanceId, String nodeId) {
+        List<Task> tasks = taskService.listTasksByInstanceIdAndNodeId(instanceId, nodeId);
+        for (Task task : tasks) {
+            if (Task.Status.PROCESSING.equals(task.getStatus())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

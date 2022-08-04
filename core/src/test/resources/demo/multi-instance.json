@@ -1,0 +1,505 @@
+{
+  "flowElementList": [
+    {
+      "id": "Event_2a8hat3",
+      "name": "开始",
+      "type": "START_EVENT",
+      "incoming": [
+      ],
+      "outgoing": [
+        "Flow_15dqdes"
+      ],
+      "x": 180,
+      "y": 160,
+      "text": {
+        "x": 180,
+        "y": 160,
+        "value": "开始"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": [
+      ],
+      "candidateUserNames": [
+      ],
+      "participants": [
+      ],
+      "participantNames": [
+      ],
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null
+    },
+    {
+      "id": "Activity_3q4pb55",
+      "name": "A(会签)",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_2bi9mo5"
+      ],
+      "outgoing": [
+        "Flow_2kt9v64"
+      ],
+      "x": 400,
+      "y": 100,
+      "text": {
+        "x": 400,
+        "y": 100,
+        "value": "A(会签)"
+      },
+      "formKey": "A",
+      "documentation": "A",
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": [
+        "Sam", "Jack"
+      ],
+      "candidateUserNames": [
+        "SamName", "JackName"
+      ],
+      "participants": [
+      ],
+      "participantNames": [
+      ],
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": "PARALLEL"
+    },
+    {
+      "id": "Activity_0ij258f",
+      "name": "B",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_27q516p"
+      ],
+      "outgoing": [
+        "Flow_34vit4p"
+      ],
+      "x": 400,
+      "y": 220,
+      "text": {
+        "x": 400,
+        "y": 220,
+        "value": "B"
+      },
+      "formKey": "B",
+      "documentation": "B",
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": [
+      ],
+      "candidateUserNames": [
+      ],
+      "participants": [
+      ],
+      "participantNames": [
+      ],
+      "taskListenerEvents": [
+        {
+          "eventName": "SetAssigneeToStarterTaskListener",
+          "eventType": "CREATE"
+        }
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null
+    },
+    {
+      "id": "Gateway_3qnoc2g",
+      "name": "",
+      "type": "PARALLEL_GATEWAY",
+      "incoming": [
+        "Flow_15dqdes"
+      ],
+      "outgoing": [
+        "Flow_2bi9mo5",
+        "Flow_27q516p"
+      ],
+      "x": 280,
+      "y": 160,
+      "text": "",
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": [
+      ],
+      "candidateUserNames": [
+      ],
+      "participants": [
+      ],
+      "participantNames": [
+      ],
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null
+    },
+    {
+      "id": "Gateway_3tq4vvq",
+      "name": "",
+      "type": "PARALLEL_GATEWAY",
+      "incoming": [
+        "Flow_2kt9v64",
+        "Flow_34vit4p"
+      ],
+      "outgoing": [
+        "Flow_03jhhpb"
+      ],
+      "x": 560,
+      "y": 160,
+      "text": "",
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": [
+      ],
+      "candidateUserNames": [
+      ],
+      "participants": [
+      ],
+      "participantNames": [
+      ],
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null
+    },
+    {
+      "id": "Activity_35p39cf",
+      "name": "C",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_03jhhpb"
+      ],
+      "outgoing": [
+        "Flow_0q92mtd"
+      ],
+      "x": 740,
+      "y": 160,
+      "text": {
+        "x": 740,
+        "y": 160,
+        "value": "C"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": [
+      ],
+      "candidateUserNames": [
+      ],
+      "participants": [
+      ],
+      "participantNames": [
+      ],
+      "taskListenerEvents": [
+        {
+          "eventName": "SetAssigneeToStarterTaskListener",
+          "eventType": "CREATE"
+        }
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null
+    },
+    {
+      "id": "Event_30pm8i2",
+      "name": "结束",
+      "type": "END_EVENT",
+      "incoming": [
+        "Flow_0q92mtd"
+      ],
+      "outgoing": [
+      ],
+      "x": 860,
+      "y": 160,
+      "text": {
+        "x": 860,
+        "y": 160,
+        "value": "结束"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": [
+      ],
+      "candidateUserNames": [
+      ],
+      "participants": [
+      ],
+      "participantNames": [
+      ],
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null
+    },
+    {
+      "id": "Flow_15dqdes",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Event_2a8hat3",
+      "targetRef": "Gateway_3qnoc2g",
+      "text": "",
+      "startPoint": {
+        "x": 198,
+        "y": 160
+      },
+      "endPoint": {
+        "x": 255,
+        "y": 160
+      },
+      "pointsList": [
+        {
+          "x": 198,
+          "y": 160
+        },
+        {
+          "x": 228,
+          "y": 160
+        },
+        {
+          "x": 228,
+          "y": 160
+        },
+        {
+          "x": 225,
+          "y": 160
+        },
+        {
+          "x": 225,
+          "y": 160
+        },
+        {
+          "x": 255,
+          "y": 160
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_2bi9mo5",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Gateway_3qnoc2g",
+      "targetRef": "Activity_3q4pb55",
+      "text": "",
+      "startPoint": {
+        "x": 305,
+        "y": 160
+      },
+      "endPoint": {
+        "x": 350,
+        "y": 100
+      },
+      "pointsList": [
+        {
+          "x": 305,
+          "y": 160
+        },
+        {
+          "x": 335,
+          "y": 160
+        },
+        {
+          "x": 335,
+          "y": 130
+        },
+        {
+          "x": 320,
+          "y": 130
+        },
+        {
+          "x": 320,
+          "y": 100
+        },
+        {
+          "x": 350,
+          "y": 100
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_27q516p",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Gateway_3qnoc2g",
+      "targetRef": "Activity_0ij258f",
+      "text": "",
+      "startPoint": {
+        "x": 305,
+        "y": 160
+      },
+      "endPoint": {
+        "x": 350,
+        "y": 220
+      },
+      "pointsList": [
+        {
+          "x": 305,
+          "y": 160
+        },
+        {
+          "x": 335,
+          "y": 160
+        },
+        {
+          "x": 335,
+          "y": 190
+        },
+        {
+          "x": 320,
+          "y": 190
+        },
+        {
+          "x": 320,
+          "y": 220
+        },
+        {
+          "x": 350,
+          "y": 220
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_2kt9v64",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_3q4pb55",
+      "targetRef": "Gateway_3tq4vvq",
+      "text": "",
+      "startPoint": {
+        "x": 450,
+        "y": 100
+      },
+      "endPoint": {
+        "x": 560,
+        "y": 135
+      },
+      "pointsList": [
+        {
+          "x": 450,
+          "y": 100
+        },
+        {
+          "x": 560,
+          "y": 100
+        },
+        {
+          "x": 560,
+          "y": 135
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_34vit4p",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_0ij258f",
+      "targetRef": "Gateway_3tq4vvq",
+      "text": "",
+      "startPoint": {
+        "x": 450,
+        "y": 220
+      },
+      "endPoint": {
+        "x": 560,
+        "y": 185
+      },
+      "pointsList": [
+        {
+          "x": 450,
+          "y": 220
+        },
+        {
+          "x": 560,
+          "y": 220
+        },
+        {
+          "x": 560,
+          "y": 185
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_03jhhpb",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Gateway_3tq4vvq",
+      "targetRef": "Activity_35p39cf",
+      "text": "",
+      "startPoint": {
+        "x": 585,
+        "y": 160
+      },
+      "endPoint": {
+        "x": 690,
+        "y": 160
+      },
+      "pointsList": [
+        {
+          "x": 585,
+          "y": 160
+        },
+        {
+          "x": 690,
+          "y": 160
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_0q92mtd",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_35p39cf",
+      "targetRef": "Event_30pm8i2",
+      "text": "",
+      "startPoint": {
+        "x": 790,
+        "y": 160
+      },
+      "endPoint": {
+        "x": 842,
+        "y": 160
+      },
+      "pointsList": [
+        {
+          "x": 790,
+          "y": 160
+        },
+        {
+          "x": 820,
+          "y": 160
+        },
+        {
+          "x": 820,
+          "y": 160
+        },
+        {
+          "x": 812,
+          "y": 160
+        },
+        {
+          "x": 812,
+          "y": 160
+        },
+        {
+          "x": 842,
+          "y": 160
+        }
+      ],
+      "conditionExpression": null
+    }
+  ]
+}

@@ -129,6 +129,54 @@ class ProcessEngineTest {
         Assertions.assertEquals(30, instance.getVariables().get("age"));
     }
 
+    @Test
+    void should_begin_multi_instance() {
+        final String source = TestFileUtils.getString("multi-instance.json");
+        final String instanceStarter = "starter";
+        final String samOwnerId = "Sam";
+        final String jackOwnerId = "Jack";
+
+        ProcessEngine processEngine = BpmnProcessEngineBuilder.builder().build();
+        RuntimeContext runtimeContext = startProcess(processEngine, source, instanceStarter, null);
+        Assertions.assertEquals(instanceStarter, runtimeContext.getProcessInstance().getStarter());
+
+        String instanceId = runtimeContext.getProcessInstance().getInstanceId();
+        Assertions.assertEquals(2,
+                processEngine.getProcessService().getInstanceById(instanceId).getCurrentNodeIds().size());
+        Assertions.assertEquals(3,
+                processEngine.getTaskService().listTasksByInstanceId(instanceId).size());
+
+        Task bTaskFromStarter = processEngine.getTaskService().listCurrentTasksByUser(instanceStarter,
+                instanceId).get(0);
+        processEngine.getRuntimeService().commit(bTaskFromStarter.getTaskId(), Collections.singletonMap("age", 30));
+        Assertions.assertEquals(1,
+                processEngine.getProcessService().getInstanceById(instanceId).getCurrentNodeIds().size());
+        Assertions.assertEquals(2,
+                processEngine.getTaskService().listTasksByInstanceId(instanceId).stream().filter(it -> Task.Status.PROCESSING.equals(it.getStatus())).count());
+
+        Task aTaskFromSam = processEngine.getTaskService().listCurrentTasksByUser(samOwnerId, instanceId).get(0);
+        processEngine.getRuntimeService().commit(aTaskFromSam.getTaskId(), Collections.singletonMap("age", 20));
+        Assertions.assertEquals(1,
+                processEngine.getProcessService().getInstanceById(instanceId).getCurrentNodeIds().size());
+        Assertions.assertEquals(1,
+                processEngine.getTaskService().listTasksByInstanceId(instanceId).stream().filter(it -> Task.Status.PROCESSING.equals(it.getStatus())).count());
+
+        Task aTaskFromJack = processEngine.getTaskService().listCurrentTasksByUser(jackOwnerId,
+                instanceId).get(0);
+        processEngine.getRuntimeService().commit(aTaskFromJack.getTaskId(), Collections.singletonMap("age", 20));
+        Assertions.assertEquals(1,
+                processEngine.getProcessService().getInstanceById(instanceId).getCurrentNodeIds().size());
+        Assertions.assertEquals(1,
+                processEngine.getTaskService().listTasksByInstanceId(instanceId).stream().filter(it -> Task.Status.PROCESSING.equals(it.getStatus())).count());
+
+        Task cTaskFromStarter =
+                processEngine.getTaskService().listCurrentTasksByUser(instanceStarter, instanceId).get(0);
+        processEngine.getRuntimeService().commit(cTaskFromStarter.getTaskId(), Collections.singletonMap("age", 40));
+        ProcessInstance instance = processEngine.getProcessService().getInstanceById(instanceId);
+        Assertions.assertEquals(ProcessStatus.COMPLETED, instance.getStatus());
+        Assertions.assertEquals(40, instance.getVariables().get("age"));
+    }
+
     private RuntimeContext startProcess(ProcessEngine processEngine, String source, String starter, Map<String,
             Object> variables) {
         // 部署

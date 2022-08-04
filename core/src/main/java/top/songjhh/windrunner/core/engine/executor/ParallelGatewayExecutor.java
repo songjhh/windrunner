@@ -25,30 +25,35 @@ public class ParallelGatewayExecutor extends AbstractFlowNodeExecutor {
     @Override
     public boolean preExecute(RuntimeContext context, FlowElement executeElement, SequenceFlow incomingSequenceFlow) {
         ParallelGateway parallelGateway = (ParallelGateway) executeElement;
-        List<SequenceFlow> nextSequenceFlowList = context.findNextSequenceFlows(parallelGateway.getOutgoing());
-        for (SequenceFlow nextSequenceFlow : nextSequenceFlowList) {
-            FlowElement nextFlowNode = context.findNextFlowNode(nextSequenceFlow);
-            nextSequenceFlow.cleanCondition();
-            FlowExecutorFactory.getExecutor(nextFlowNode.getType()).preExecute(context, nextFlowNode, nextSequenceFlow);
+        if (this.checkExecutorNext(context, parallelGateway)) {
+            return false;
         }
+        this.executorNext(context, parallelGateway);
         return true;
     }
 
     @Override
     public void doExecute(RuntimeContext context, FlowElement executeElement, Task task) {
-        ParallelGateway parallelGateway = (ParallelGateway) executeElement;
+        throw new UnsupportedOperationException();
+    }
+
+    private boolean checkExecutorNext(RuntimeContext context, ParallelGateway parallelGateway) {
         List<SequenceFlow> previousSequenceFlowList = context.findPreviousSequenceFlows(parallelGateway.getIncoming());
         for (SequenceFlow sequenceFlow : previousSequenceFlowList) {
             FlowElement previousFlowNode = context.findPreviousFlowNode(sequenceFlow);
             if (context.getProcessInstance().getCurrentNodeIds().contains(previousFlowNode.getId())) {
-                return;
+                return true;
             }
         }
+        return false;
+    }
 
+    private void executorNext(RuntimeContext context, ParallelGateway parallelGateway) {
         List<SequenceFlow> nextSequenceFlowList = context.findNextSequenceFlows(parallelGateway.getOutgoing());
-        for (SequenceFlow sequenceFlow : nextSequenceFlowList) {
-            FlowElement nextFlowNode = context.findNextFlowNode(sequenceFlow);
-            FlowExecutorFactory.getExecutor(nextFlowNode.getType()).preExecute(context, nextFlowNode, sequenceFlow);
+        for (SequenceFlow nextSequenceFlow : nextSequenceFlowList) {
+            FlowElement nextFlowNode = context.findNextFlowNode(nextSequenceFlow);
+            nextSequenceFlow.cleanCondition();
+            FlowExecutorFactory.getExecutor(nextFlowNode.getType()).preExecute(context, nextFlowNode, nextSequenceFlow);
         }
     }
 }
