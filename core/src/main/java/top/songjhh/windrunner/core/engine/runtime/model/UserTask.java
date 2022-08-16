@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 public class UserTask extends FlowActivity {
 
+    @Setter
     private String formKey;
     @Setter
     private String assignee;
@@ -23,6 +24,10 @@ public class UserTask extends FlowActivity {
     private final List<String> participants = new ArrayList<>();
     private final List<String> participantNames = new ArrayList<>();
     private final List<TaskListenerEvent> taskListenerEvents = new ArrayList<>();
+    @Setter
+    private String candidateExpression;
+    @Setter
+    private String participantsExpression;
 
     @Override
     public Type getType() {

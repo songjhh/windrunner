@@ -1,6 +1,9 @@
 package top.songjhh.windrunner.core.engine.executor;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import ognl.Ognl;
+import ognl.OgnlException;
 import top.songjhh.windrunner.core.engine.identity.IdentityService;
 import top.songjhh.windrunner.core.engine.listener.DelegateTask;
 import top.songjhh.windrunner.core.engine.listener.TaskListener;
@@ -15,6 +18,8 @@ import top.songjhh.windrunner.core.engine.runtime.model.SequenceFlow;
 import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
+import top.songjhh.windrunner.core.exception.FlowExpressionException;
+import top.songjhh.windrunner.core.exception.ProcessEngineException;
 import top.songjhh.windrunner.core.util.ConditionExpressionUtils;
 
 import java.util.ArrayList;
@@ -31,6 +36,8 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         super(processService, taskService, identityService);
     }
 
+
+    @SneakyThrows
     @Override
     public boolean preExecute(RuntimeContext context, FlowElement executeElement, SequenceFlow incomingSequenceFlow) {
         UserTask userTask = (UserTask) executeElement;
@@ -40,7 +47,8 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
             return false;
         }
 
-        notifyTaskEvent(userTask.getTaskListenerEvents(),
+        this.resolveExpression(context.getProcessInstance(), userTask);
+        this.notifyTaskEvent(userTask.getTaskListenerEvents(),
                 new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
 
         List<Task> tasks = this.createTasks(processInstance, userTask);
@@ -137,4 +145,37 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         }
         return true;
     }
+
+    private void resolveExpression(ProcessInstance instance, UserTask userTask) {
+        try {
+            this.resolveExpression(userTask.getCandidateExpression(), userTask.getCandidateUsers(),
+                    userTask.getCandidateUserNames(), instance);
+            this.resolveExpression(userTask.getParticipantsExpression(), userTask.getParticipants(),
+                    userTask.getParticipantNames(), instance);
+        } catch (OgnlException e) {
+            throw new FlowExpressionException(e);
+        } catch (Exception e) {
+            throw new ProcessEngineException("Can not resolve expression: " + e.getMessage(), e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void resolveExpression(String expression, List<String> idList,
+                                   List<String> nameList, ProcessInstance instance) throws OgnlException {
+        if (expression != null && !"".equals(expression)) {
+            Object value = Ognl.getValue(Ognl.parseExpression(expression), instance);
+            if (value instanceof String) {
+                idList.add((String) value);
+                nameList.add(identityService.getNameByUserId((String) value));
+            } else if (value instanceof List) {
+                List<Object> valueList = (List<Object>) value;
+                List<String> valueStringList = valueList.stream().map(Object::toString).collect(Collectors.toList());
+                List<String> valueStringNameList =
+                        valueStringList.stream().map(identityService::getNameByUserId).collect(Collectors.toList());
+                idList.addAll(valueStringList);
+                nameList.addAll(valueStringNameList);
+            }
+        }
+    }
+
 }
