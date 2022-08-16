@@ -22,6 +22,25 @@ public interface RuntimeService {
     RuntimeContext startProcessByDeploymentId(String starter, String deploymentId, Map<String, Object> variables);
 
     /**
+     * 草稿流程
+     *
+     * @param starter      发起者
+     * @param deploymentId 部署实例id
+     * @param variables    表单信息
+     * @return 运行上下文
+     */
+    RuntimeContext draftProcessByDeploymentId(String starter, String deploymentId, Map<String, Object> variables);
+
+    /**
+     * 开始草稿流程
+     *
+     * @param instanceId 草稿实例id
+     * @param variables  表单信息
+     * @return 运行上下文
+     */
+    RuntimeContext startProcessByDraft(String instanceId, Map<String, Object> variables);
+
+    /**
      * 提交
      *
      * @param assignee  执行人

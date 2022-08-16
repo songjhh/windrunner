@@ -74,10 +74,10 @@ public class ProcessInstance {
         this.instanceId = NanoIdUtils.randomNanoId();
         this.deploymentId = builder.getDeploymentId();
         this.name = builder.getName();
-        this.startDateTime = LocalDateTime.now();
+        this.startDateTime = builder.getStartDateTime();
         this.currentNodeIds = new HashSet<>();
         this.variables = Optional.ofNullable(builder.getVariables()).orElse(new HashMap<>());
-        this.status = ProcessStatus.RUNNING;
+        this.status = builder.getStatus();
         this.starter = builder.getStarter();
         this.starterName = builder.getStarterName();
         this.starterPlatforms = builder.getStarterPlatforms();
@@ -99,9 +99,14 @@ public class ProcessInstance {
         }
     }
 
+    public void start() {
+        this.startDateTime = LocalDateTime.now();
+        this.status = ProcessStatus.RUNNING;
+    }
+
     public void complete() {
-        status = ProcessStatus.COMPLETED;
-        endDateTime = LocalDateTime.now();
+        this.status = ProcessStatus.COMPLETED;
+        this.endDateTime = LocalDateTime.now();
     }
 
 }

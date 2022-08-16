@@ -50,6 +50,26 @@ public class RuntimeServiceImpl implements RuntimeService {
     }
 
     @Override
+    public RuntimeContext draftProcessByDeploymentId(String starter, String deploymentId,
+                                                     Map<String, Object> variables) {
+        Deployment deployment = deploymentService.getDeploymentById(deploymentId);
+        if (!Deployment.Status.DEPLOYED.equals(deployment.getStatus())) {
+            throw new DeploymentNotDeployException();
+        }
+        ProcessInstance processInstance = processService.draftProcessByDeployment(
+                identityService.getEntityByUserId(starter), deployment, variables);
+        return RuntimeContext.getContextByInstance(processInstance, deployment);
+    }
+
+    @Override
+    public RuntimeContext startProcessByDraft(String instanceId, Map<String, Object> variables) {
+        ProcessInstance processInstance = processService.startProcessByDraft(instanceId, variables);
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
+        return runtimeContext.startProcess();
+    }
+
+    @Override
     public RuntimeContext commit(String assignee, String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());

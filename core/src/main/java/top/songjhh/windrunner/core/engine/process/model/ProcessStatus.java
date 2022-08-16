@@ -5,6 +5,10 @@ package top.songjhh.windrunner.core.engine.process.model;
  */
 public enum ProcessStatus {
     /**
+     * 草稿
+     */
+    DRAFT,
+    /**
      * 运行中
      */
     RUNNING,
@@ -19,5 +23,5 @@ public enum ProcessStatus {
     /**
      * 终止
      */
-    TERMINATED;
+    TERMINATED
 }

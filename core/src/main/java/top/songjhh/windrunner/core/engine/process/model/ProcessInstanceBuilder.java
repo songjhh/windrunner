@@ -3,6 +3,7 @@ package top.songjhh.windrunner.core.engine.process.model;
 import lombok.Getter;
 import top.songjhh.windrunner.core.engine.runtime.model.UserEntity;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ public class ProcessInstanceBuilder {
     private String starterName;
     private List<String> starterPlatforms;
     private List<String> starterDepartments;
+    private LocalDateTime startDateTime;
+    private ProcessStatus status;
 
     private ProcessInstanceBuilder() {
         this.variables = new HashMap<>();
@@ -51,7 +54,14 @@ public class ProcessInstanceBuilder {
         return this;
     }
 
-    public ProcessInstance build() {
+    public ProcessInstance draft() {
+        this.status = ProcessStatus.DRAFT;
+        return new ProcessInstance(this);
+    }
+
+    public ProcessInstance start() {
+        this.startDateTime = LocalDateTime.now();
+        this.status = ProcessStatus.RUNNING;
         return new ProcessInstance(this);
     }
 }

@@ -24,6 +24,25 @@ public interface ProcessService {
     ProcessInstance startProcessByDeployment(UserEntity starter, Deployment deployment, Map<String, Object> variables);
 
     /**
+     * 草稿流程
+     *
+     * @param starter    发起者
+     * @param deployment 部署实例
+     * @param variables  表单信息
+     * @return 运行实例
+     */
+    ProcessInstance draftProcessByDeployment(UserEntity starter, Deployment deployment, Map<String, Object> variables);
+
+    /**
+     * 开始草稿流程
+     *
+     * @param instanceId 草稿实例id
+     * @param variables    表单信息
+     * @return 运行实例
+     */
+    ProcessInstance startProcessByDraft(String instanceId, Map<String, Object> variables);
+
+    /**
      * 获取运行实例
      *
      * @param instanceId 实例id
