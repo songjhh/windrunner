@@ -113,4 +113,9 @@ public class ProcessInstance {
         this.endDateTime = LocalDateTime.now();
     }
 
+    public void terminate() {
+        this.status = ProcessStatus.TERMINATED;
+        this.endDateTime = LocalDateTime.now();
+    }
+
 }

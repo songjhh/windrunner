@@ -174,7 +174,7 @@ public class Task {
         }
     }
 
-    public Task terminated() {
+    public Task terminate() {
         this.status = Status.TERMINATED;
         this.endDateTime = LocalDateTime.now();
         return this;

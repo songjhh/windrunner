@@ -118,7 +118,7 @@ public class RuntimeServiceImpl implements RuntimeService {
         List<Task> nextFlowNodeTasks = this.getNextFlowNodeTasks(userTask, runtimeContext);
         for (Task it : nextFlowNodeTasks) {
             // 子节点所有任务废弃
-            it.terminated();
+            it.terminate();
             taskService.save(it);
             // 回退节点
             processInstance.goBackNode(it.getNodeId());

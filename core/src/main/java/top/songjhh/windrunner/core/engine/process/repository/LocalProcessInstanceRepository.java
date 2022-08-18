@@ -1,7 +1,6 @@
 package top.songjhh.windrunner.core.engine.process.repository;
 
 import cc.ldsd.common.bean.web.AdvancedPagedQuery;
-import top.songjhh.windrunner.core.engine.process.ProcessService;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class LocalProcessInstanceRepository implements ProcessInstanceRepository
 
     @Override
     public <T extends AdvancedPagedQuery> List<ProcessInstance> list(T query) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -40,8 +39,4 @@ public class LocalProcessInstanceRepository implements ProcessInstanceRepository
         return 0;
     }
 
-    @Override
-    public void deleteById(String instanceId) {
-        processInstanceMap.remove(instanceId);
-    }
 }

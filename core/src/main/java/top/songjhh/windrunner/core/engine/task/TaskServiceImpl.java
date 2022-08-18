@@ -29,8 +29,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deleteByInstanceId(String instanceId) {
-        taskRepository.deleteByInstanceId(instanceId);
+    public void terminateAllByInstanceId(String instanceId) {
+        List<Task> tasks = taskRepository.listTasksByInstanceId(instanceId);
+        for (Task task : tasks) {
+            if (Task.Status.PROCESSING.equals(task.getStatus())) {
+                task.terminate();
+                taskRepository.save(task);
+            }
+        }
     }
 
     @Override

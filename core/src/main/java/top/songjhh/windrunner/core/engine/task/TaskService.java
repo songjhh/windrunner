@@ -68,12 +68,10 @@ public interface TaskService {
     List<Task> listCurrentTasksByUser(String user, String instanceId);
 
     /**
-     * 删除指定流程的所有任务
-     * TODO: 不能删除
+     * 废弃指定流程的所有任务
      *
      * @param instanceId 流程Id
      */
-    @Deprecated
-    void deleteByInstanceId(String instanceId);
+    void terminateAllByInstanceId(String instanceId);
 
 }

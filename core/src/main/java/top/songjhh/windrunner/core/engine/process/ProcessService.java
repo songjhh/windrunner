@@ -37,7 +37,7 @@ public interface ProcessService {
      * 开始草稿流程
      *
      * @param instanceId 草稿实例id
-     * @param variables    表单信息
+     * @param variables  表单信息
      * @return 运行实例
      */
     ProcessInstance startProcessByDraft(String instanceId, Map<String, Object> variables);
@@ -74,12 +74,10 @@ public interface ProcessService {
     <T extends AdvancedPagedQuery> long count(T query);
 
     /**
-     * 删除流程
-     * TODO: 不能删除
+     * 废弃流程
      *
      * @param instanceId 实例id
      */
-    @Deprecated
-    void deleteById(String instanceId);
+    void terminateById(String instanceId);
 
 }

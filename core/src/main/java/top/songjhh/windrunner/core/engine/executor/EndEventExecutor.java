@@ -25,7 +25,7 @@ public class EndEventExecutor extends AbstractFlowNodeExecutor {
         taskService.listTasksByInstanceId(processInstance.getInstanceId())
                 .stream()
                 .filter(it -> Task.Status.PROCESSING.equals(it.getStatus()))
-                .forEach(it -> taskService.save(it.terminated()));
+                .forEach(it -> taskService.save(it.terminate()));
         processInstance.complete();
         processService.save(processInstance);
         return true;

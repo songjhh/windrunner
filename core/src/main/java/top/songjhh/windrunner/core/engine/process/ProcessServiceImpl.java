@@ -86,10 +86,11 @@ public class ProcessServiceImpl implements ProcessService {
         return processInstanceRepository.count(query);
     }
 
-
     @Override
-    public void deleteById(String instanceId) {
-        processInstanceRepository.deleteById(instanceId);
+    public void terminateById(String instanceId) {
+        ProcessInstance processInstance = processInstanceRepository.getInstanceById(instanceId);
+        processInstance.terminate();
+        processInstanceRepository.save(processInstance);
     }
 
 
