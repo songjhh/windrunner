@@ -1,0 +1,495 @@
+{
+  "flowElementList": [
+    {
+      "id": "Activity_0420nth",
+      "name": "D",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_129694r"
+      ],
+      "outgoing": [
+        "Flow_192c82n"
+      ],
+      "x": 440,
+      "y": 220,
+      "text": {
+        "x": 440,
+        "y": 220,
+        "value": "D"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": "variables.nextUser4",
+      "participantsExpression": null
+    },
+    {
+      "id": "Gateway_1oto4cp",
+      "name": "",
+      "type": "EXCLUSIVE_GATEWAY",
+      "incoming": [
+        "Flow_0qk4srb"
+      ],
+      "outgoing": [
+        "Flow_1888rbg",
+        "Flow_2mbljae"
+      ],
+      "x": 380,
+      "y": 360,
+      "text": "",
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": null,
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": null,
+      "participantsExpression": null
+    },
+    {
+      "id": "Activity_2jojsfv",
+      "name": "B",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_1888rbg"
+      ],
+      "outgoing": [
+        "Flow_3fof5gb"
+      ],
+      "x": 540,
+      "y": 340,
+      "text": {
+        "x": 540,
+        "y": 340,
+        "value": "B"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": "variables.nextUser2",
+      "participantsExpression": null
+    },
+    {
+      "id": "Activity_29cp37a",
+      "name": "C",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_2mbljae"
+      ],
+      "outgoing": [
+        "Flow_27mm241"
+      ],
+      "x": 540,
+      "y": 460,
+      "text": {
+        "x": 540,
+        "y": 460,
+        "value": "C"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": "variables.nextUse3",
+      "participantsExpression": null
+    },
+    {
+      "id": "Event_2lafpe4",
+      "name": "",
+      "type": "END_EVENT",
+      "incoming": [
+        "Flow_192c82n",
+        "Flow_27mm241",
+        "Flow_3fof5gb"
+      ],
+      "outgoing": [
+      ],
+      "x": 780,
+      "y": 340,
+      "text": "",
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": null,
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": null,
+      "participantsExpression": null
+    },
+    {
+      "id": "Activity_0oma8h9",
+      "name": "A",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_3o9luri"
+      ],
+      "outgoing": [
+        "Flow_129694r",
+        "Flow_0qk4srb"
+      ],
+      "x": 260,
+      "y": 300,
+      "text": {
+        "x": 260,
+        "y": 300,
+        "value": "A"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": "variables.nextUser",
+      "participantsExpression": null
+    },
+    {
+      "id": "Event_1cp2cug",
+      "name": "",
+      "type": "START_EVENT",
+      "incoming": [
+      ],
+      "outgoing": [
+        "Flow_3o9luri"
+      ],
+      "x": 160,
+      "y": 300,
+      "text": "",
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": null,
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": null,
+      "participantsExpression": null
+    },
+    {
+      "id": "Flow_1888rbg",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Gateway_1oto4cp",
+      "targetRef": "Activity_2jojsfv",
+      "text": "",
+      "startPoint": {
+        "x": 405,
+        "y": 360
+      },
+      "endPoint": {
+        "x": 490,
+        "y": 340
+      },
+      "pointsList": [
+        {
+          "x": 405,
+          "y": 360
+        },
+        {
+          "x": 447.5,
+          "y": 360
+        },
+        {
+          "x": 447.5,
+          "y": 340
+        },
+        {
+          "x": 490,
+          "y": 340
+        }
+      ],
+      "conditionExpression": "1==1"
+    },
+    {
+      "id": "Flow_2mbljae",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Gateway_1oto4cp",
+      "targetRef": "Activity_29cp37a",
+      "text": "",
+      "startPoint": {
+        "x": 405,
+        "y": 360
+      },
+      "endPoint": {
+        "x": 490,
+        "y": 460
+      },
+      "pointsList": [
+        {
+          "x": 405,
+          "y": 360
+        },
+        {
+          "x": 460,
+          "y": 360
+        },
+        {
+          "x": 460,
+          "y": 460
+        },
+        {
+          "x": 490,
+          "y": 460
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_192c82n",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_0420nth",
+      "targetRef": "Event_2lafpe4",
+      "text": "",
+      "startPoint": {
+        "x": 490,
+        "y": 220
+      },
+      "endPoint": {
+        "x": 780,
+        "y": 322
+      },
+      "pointsList": [
+        {
+          "x": 490,
+          "y": 220
+        },
+        {
+          "x": 780,
+          "y": 220
+        },
+        {
+          "x": 780,
+          "y": 322
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_27mm241",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_29cp37a",
+      "targetRef": "Event_2lafpe4",
+      "text": "",
+      "startPoint": {
+        "x": 590,
+        "y": 460
+      },
+      "endPoint": {
+        "x": 780,
+        "y": 358
+      },
+      "pointsList": [
+        {
+          "x": 590,
+          "y": 460
+        },
+        {
+          "x": 780,
+          "y": 460
+        },
+        {
+          "x": 780,
+          "y": 358
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_3fof5gb",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_2jojsfv",
+      "targetRef": "Event_2lafpe4",
+      "text": "",
+      "startPoint": {
+        "x": 590,
+        "y": 340
+      },
+      "endPoint": {
+        "x": 762,
+        "y": 340
+      },
+      "pointsList": [
+        {
+          "x": 590,
+          "y": 340
+        },
+        {
+          "x": 762,
+          "y": 340
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_3o9luri",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Event_1cp2cug",
+      "targetRef": "Activity_0oma8h9",
+      "text": "",
+      "startPoint": {
+        "x": 178,
+        "y": 300
+      },
+      "endPoint": {
+        "x": 210,
+        "y": 300
+      },
+      "pointsList": [
+        {
+          "x": 178,
+          "y": 300
+        },
+        {
+          "x": 208,
+          "y": 300
+        },
+        {
+          "x": 208,
+          "y": 300
+        },
+        {
+          "x": 180,
+          "y": 300
+        },
+        {
+          "x": 180,
+          "y": 300
+        },
+        {
+          "x": 210,
+          "y": 300
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_129694r",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_0oma8h9",
+      "targetRef": "Activity_0420nth",
+      "text": "",
+      "startPoint": {
+        "x": 310,
+        "y": 300
+      },
+      "endPoint": {
+        "x": 390,
+        "y": 220
+      },
+      "pointsList": [
+        {
+          "x": 310,
+          "y": 300
+        },
+        {
+          "x": 360,
+          "y": 300
+        },
+        {
+          "x": 360,
+          "y": 220
+        },
+        {
+          "x": 390,
+          "y": 220
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_0qk4srb",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_0oma8h9",
+      "targetRef": "Gateway_1oto4cp",
+      "text": "",
+      "startPoint": {
+        "x": 310,
+        "y": 300
+      },
+      "endPoint": {
+        "x": 355,
+        "y": 360
+      },
+      "pointsList": [
+        {
+          "x": 310,
+          "y": 300
+        },
+        {
+          "x": 340,
+          "y": 300
+        },
+        {
+          "x": 340,
+          "y": 330
+        },
+        {
+          "x": 325,
+          "y": 330
+        },
+        {
+          "x": 325,
+          "y": 360
+        },
+        {
+          "x": 355,
+          "y": 360
+        }
+      ],
+      "conditionExpression": null
+    }
+  ]
+}

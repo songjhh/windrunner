@@ -39,6 +39,8 @@ public class TaskServiceImpl implements TaskService {
         if (task == null) {
             throw new NotFoundTaskException(taskId);
         }
+        task.setRead(true);
+        taskRepository.save(task);
         return task;
     }
 

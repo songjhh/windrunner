@@ -1,6 +1,5 @@
 package top.songjhh.windrunner.core.engine.executor;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ognl.Ognl;
 import ognl.OgnlException;
@@ -36,14 +35,13 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         super(processService, taskService, identityService);
     }
 
-
-    @SneakyThrows
     @Override
     public boolean preExecute(RuntimeContext context, FlowElement executeElement, SequenceFlow incomingSequenceFlow) {
         UserTask userTask = (UserTask) executeElement;
         ProcessInstance processInstance = context.getProcessInstance();
-        if (!ConditionExpressionUtils.validCondition(incomingSequenceFlow.getConditionExpression(),
-                processInstance.getVariables())) {
+        if (incomingSequenceFlow != null &&
+                !ConditionExpressionUtils.validCondition(incomingSequenceFlow.getConditionExpression(),
+                        processInstance.getVariables())) {
             return false;
         }
 

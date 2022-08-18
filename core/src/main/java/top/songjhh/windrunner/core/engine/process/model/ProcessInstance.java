@@ -93,6 +93,10 @@ public class ProcessInstance {
         this.variables.putAll(variables);
     }
 
+    public void goBackNode(String nodeId) {
+        currentNodeIds.remove(nodeId);
+    }
+
     public void putAllVariables(Map<String, Object> variables) {
         if (variables != null) {
             this.variables.putAll(variables);

@@ -69,9 +69,11 @@ public interface TaskService {
 
     /**
      * 删除指定流程的所有任务
+     * TODO: 不能删除
      *
      * @param instanceId 流程Id
      */
+    @Deprecated
     void deleteByInstanceId(String instanceId);
 
 }

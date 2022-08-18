@@ -115,7 +115,10 @@ public class Task {
      */
     @JacksonDateTimeFormat2Slash
     private LocalDateTime startDateTime;
-
+    /**
+     * 是否已读
+     */
+    private Boolean read;
 
     private Task(ProcessInstance processInstance, UserTask userTask) {
         this.taskId = NanoIdUtils.randomNanoId();
@@ -139,6 +142,7 @@ public class Task {
         this.starterPlatforms = processInstance.getStarterPlatforms();
         this.starterDepartments = processInstance.getStarterDepartments();
         this.startDateTime = processInstance.getStartDateTime();
+        this.read = false;
     }
 
     public static Task create(ProcessInstance processInstance, UserTask userTask) {
@@ -172,6 +176,7 @@ public class Task {
 
     public Task terminated() {
         this.status = Status.TERMINATED;
+        this.endDateTime = LocalDateTime.now();
         return this;
     }
 

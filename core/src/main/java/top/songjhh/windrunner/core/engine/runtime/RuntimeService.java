@@ -71,6 +71,22 @@ public interface RuntimeService {
     RuntimeContext save(String taskId, Map<String, Object> variables);
 
     /**
+     * 判断任务是否可拿回
+     *
+     * @param taskId 任务id
+     * @return 结果
+     */
+    boolean canTakeBack(String taskId);
+
+    /**
+     * 拿回
+     *
+     * @param taskId 要拿回的任务
+     * @return 运行上下文
+     */
+    RuntimeContext takeBack(String taskId);
+
+    /**
      * 获取列表
      *
      * @param query 查询条件

@@ -6,13 +6,18 @@ import top.songjhh.windrunner.core.engine.deployment.model.Deployment;
 import top.songjhh.windrunner.core.engine.identity.IdentityService;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
+import top.songjhh.windrunner.core.engine.process.model.ProcessStatus;
 import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
+import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
+import top.songjhh.windrunner.core.engine.runtime.model.FlowNode;
+import top.songjhh.windrunner.core.engine.runtime.model.SequenceFlow;
+import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.exception.DeploymentNotDeployException;
+import top.songjhh.windrunner.core.exception.UserTaskTakeBackException;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -89,6 +94,63 @@ public class RuntimeServiceImpl implements RuntimeService {
     }
 
     @Override
+    public boolean canTakeBack(String taskId) {
+        Task task = taskService.getById(taskId);
+        ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
+        UserTask userTask = (UserTask) runtimeContext.findFlowNode(task.getNodeId());
+        return this.checkTakeBack(task, userTask, runtimeContext);
+    }
+
+    @Override
+    public RuntimeContext takeBack(String taskId) {
+        Task task = taskService.getById(taskId);
+        ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
+        UserTask userTask = (UserTask) runtimeContext.findFlowNode(task.getNodeId());
+
+        if (!this.checkTakeBack(task, userTask, runtimeContext)) {
+            throw new UserTaskTakeBackException();
+        }
+        // 获取任务节点的所有子节点
+        List<Task> nextFlowNodeTasks = this.getNextFlowNodeTasks(userTask, runtimeContext);
+        for (Task it : nextFlowNodeTasks) {
+            // 子节点所有任务废弃
+            it.terminated();
+            taskService.save(it);
+            // 回退节点
+            processInstance.goBackNode(it.getNodeId());
+        }
+        processService.save(processInstance);
+
+        // 重新生成任务
+        userTask.setAssignee(task.getAssignee());
+        userTask.setAssigneeName(task.getAssigneeName());
+        Task newTask = Task.create(processInstance, userTask);
+        taskService.save(newTask);
+
+        processInstance = processService.getInstanceById(task.getInstanceId());
+        return RuntimeContext.getContextByInstance(processInstance, deployment);
+    }
+
+    private void setNextFlowNodeIds(Set<String> flowElementIds, FlowNode flowNode, RuntimeContext runtimeContext) {
+        // 获取任务节点的线
+        List<SequenceFlow> nextSequenceFlows = runtimeContext.findNextSequenceFlows(flowNode.getOutgoing());
+        for (SequenceFlow sequenceFlow : nextSequenceFlows) {
+            FlowElement flowElement = runtimeContext.findNextFlowNode(sequenceFlow);
+            // 如果是网关则继续往下找
+            if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())
+                    || FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
+                setNextFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
+                continue;
+            }
+            flowElementIds.add(flowElement.getId());
+        }
+    }
+
+    @Override
     public <T extends AdvancedPagedQuery> List<RuntimeContext> list(T query) {
         return processService.list(query).stream()
                 .map(it -> RuntimeContext.getContextByInstance(
@@ -101,5 +163,33 @@ public class RuntimeServiceImpl implements RuntimeService {
         ProcessInstance processInstance = processService.getInstanceById(instanceId);
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         return RuntimeContext.getContextByInstance(processInstance, deployment);
+    }
+
+    private boolean checkTakeBack(Task task, UserTask userTask, RuntimeContext runtimeContext) {
+        if (!Task.Status.FINISH.equals(task.getStatus())
+                || !ProcessStatus.RUNNING.equals(runtimeContext.getProcessInstance().getStatus())) {
+            return false;
+        }
+        List<Task> nextFlowNodeTasks = getNextFlowNodeTasks(userTask, runtimeContext);
+        for (Task it : nextFlowNodeTasks) {
+            boolean cannotTaskBack = Boolean.TRUE.equals(it.getRead()) || Task.Status.FINISH.equals(it.getStatus());
+            if (cannotTaskBack) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<Task> getNextFlowNodeTasks(UserTask userTask, RuntimeContext runtimeContext) {
+        // 获取任务节点的所有子节点
+        Set<String> nextFlowNodeIds = new HashSet<>();
+        setNextFlowNodeIds(nextFlowNodeIds, userTask, runtimeContext);
+        // 如果子节点的任务，有已完成或查看，则不允许拿回
+        List<Task> nextFlowNodeTasks = new ArrayList<>();
+        for (String nextFlowNodeId : nextFlowNodeIds) {
+            nextFlowNodeTasks.addAll(taskService.listTasksByInstanceIdAndNodeId(
+                    runtimeContext.getProcessInstance().getInstanceId(), nextFlowNodeId));
+        }
+        return nextFlowNodeTasks;
     }
 }

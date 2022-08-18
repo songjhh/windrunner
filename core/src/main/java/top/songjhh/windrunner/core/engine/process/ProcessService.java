@@ -75,9 +75,11 @@ public interface ProcessService {
 
     /**
      * 删除流程
+     * TODO: 不能删除
      *
      * @param instanceId 实例id
      */
+    @Deprecated
     void deleteById(String instanceId);
 
 }

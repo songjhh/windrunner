@@ -1,0 +1,233 @@
+{
+  "flowElementList": [
+    {
+      "id": "Event_2q1k94j",
+      "name": "",
+      "type": "START_EVENT",
+      "incoming": [
+      ],
+      "outgoing": [
+        "Flow_338goej"
+      ],
+      "x": 200,
+      "y": 280,
+      "text": "",
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": null,
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": null,
+      "participantsExpression": null
+    },
+    {
+      "id": "Activity_1pi6j6v",
+      "name": "A",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_338goej"
+      ],
+      "outgoing": [
+        "Flow_234ci44"
+      ],
+      "x": 320,
+      "y": 280,
+      "text": {
+        "x": 320,
+        "y": 280,
+        "value": "A"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": "variables.nextUser",
+      "participantsExpression": null
+    },
+    {
+      "id": "Activity_0iltioi",
+      "name": "B",
+      "type": "USER_TASK",
+      "incoming": [
+        "Flow_234ci44"
+      ],
+      "outgoing": [
+        "Flow_0ute8tc"
+      ],
+      "x": 480,
+      "y": 280,
+      "text": {
+        "x": 480,
+        "y": 280,
+        "value": "B"
+      },
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": [
+      ],
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": "variables.nextUser",
+      "participantsExpression": null
+    },
+    {
+      "id": "Event_1o7ake1",
+      "name": "",
+      "type": "END_EVENT",
+      "incoming": [
+        "Flow_0ute8tc"
+      ],
+      "outgoing": [
+      ],
+      "x": 600,
+      "y": 280,
+      "text": "",
+      "formKey": null,
+      "documentation": null,
+      "assignee": null,
+      "assigneeName": null,
+      "candidateUsers": null,
+      "candidateUserNames": null,
+      "participants": null,
+      "participantNames": null,
+      "taskListenerEvents": null,
+      "activityKey": null,
+      "multiInstanceLoopCharacteristics": null,
+      "candidateExpression": null,
+      "participantsExpression": null
+    },
+    {
+      "id": "Flow_338goej",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Event_2q1k94j",
+      "targetRef": "Activity_1pi6j6v",
+      "text": "",
+      "startPoint": {
+        "x": 218,
+        "y": 280
+      },
+      "endPoint": {
+        "x": 270,
+        "y": 280
+      },
+      "pointsList": [
+        {
+          "x": 218,
+          "y": 280
+        },
+        {
+          "x": 248,
+          "y": 280
+        },
+        {
+          "x": 248,
+          "y": 280
+        },
+        {
+          "x": 240,
+          "y": 280
+        },
+        {
+          "x": 240,
+          "y": 280
+        },
+        {
+          "x": 270,
+          "y": 280
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_234ci44",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_1pi6j6v",
+      "targetRef": "Activity_0iltioi",
+      "text": "",
+      "startPoint": {
+        "x": 370,
+        "y": 280
+      },
+      "endPoint": {
+        "x": 430,
+        "y": 280
+      },
+      "pointsList": [
+        {
+          "x": 370,
+          "y": 280
+        },
+        {
+          "x": 430,
+          "y": 280
+        }
+      ],
+      "conditionExpression": null
+    },
+    {
+      "id": "Flow_0ute8tc",
+      "name": "",
+      "type": "SEQUENCE_FLOW",
+      "sourceRef": "Activity_0iltioi",
+      "targetRef": "Event_1o7ake1",
+      "text": "",
+      "startPoint": {
+        "x": 530,
+        "y": 280
+      },
+      "endPoint": {
+        "x": 582,
+        "y": 280
+      },
+      "pointsList": [
+        {
+          "x": 530,
+          "y": 280
+        },
+        {
+          "x": 560,
+          "y": 280
+        },
+        {
+          "x": 560,
+          "y": 280
+        },
+        {
+          "x": 552,
+          "y": 280
+        },
+        {
+          "x": 552,
+          "y": 280
+        },
+        {
+          "x": 582,
+          "y": 280
+        }
+      ],
+      "conditionExpression": null
+    }
+  ]
+}

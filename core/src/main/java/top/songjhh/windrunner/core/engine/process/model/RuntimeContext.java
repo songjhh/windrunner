@@ -60,12 +60,16 @@ public class RuntimeContext {
         return getSequenceFlowsByDirection(incoming);
     }
 
+    public FlowElement findFlowNode(String nodeId) {
+        return flowElementMap.get(nodeId);
+    }
+
     public FlowElement findNextFlowNode(SequenceFlow sequenceFlow) {
-        return flowElementMap.get(sequenceFlow.getTargetRef());
+        return findFlowNode(sequenceFlow.getTargetRef());
     }
 
     public FlowElement findPreviousFlowNode(SequenceFlow sequenceFlow) {
-        return flowElementMap.get(sequenceFlow.getSourceRef());
+        return findFlowNode(sequenceFlow.getSourceRef());
     }
 
     public void updateVariables(Map<String, Object> variables) {
