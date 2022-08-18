@@ -161,7 +161,14 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
     private void resolveExpression(String expression, List<String> idList,
                                    List<String> nameList, ProcessInstance instance) throws OgnlException {
         if (expression != null && !"".equals(expression)) {
-            Object value = Ognl.getValue(Ognl.parseExpression(expression), instance);
+            Object value = null;
+            try {
+                value = Ognl.getValue(Ognl.parseExpression(expression), instance);
+            } catch (Exception ignored) {
+            }
+            if (value == null) {
+                return;
+            }
             if (value instanceof String) {
                 idList.add((String) value);
                 nameList.add(identityService.getNameByUserId((String) value));
