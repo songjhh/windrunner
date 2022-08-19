@@ -165,6 +165,7 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
             try {
                 value = Ognl.getValue(Ognl.parseExpression(expression), instance);
             } catch (Exception ignored) {
+                // do nothing
             }
             if (value == null) {
                 return;
