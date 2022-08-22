@@ -68,7 +68,8 @@ class ProcessEngineTakeBackTest {
                 .listCurrentTasksByUser(secondTaskOwnerId, runtimeContext.getProcessInstance().getInstanceId()).size());
 
         // 退回
-        processEngine.getRuntimeService().takeBack(aTasks.get(0).getTaskId());
+        runtimeContext = processEngine.getRuntimeService().takeBack(aTasks.get(0).getTaskId());
+        Assertions.assertEquals(1, runtimeContext.getProcessInstance().getCurrentNodeIds().size());
         aTasks = processEngine.getTaskService()
                 .listCurrentTasksByUser(firstTaskOwnerId, runtimeContext.getProcessInstance().getInstanceId());
         Assertions.assertEquals(1, aTasks.size());
