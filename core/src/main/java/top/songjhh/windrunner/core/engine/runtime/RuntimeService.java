@@ -32,6 +32,15 @@ public interface RuntimeService {
     RuntimeContext draftProcessByDeploymentId(String starter, String deploymentId, Map<String, Object> variables);
 
     /**
+     * 保存草稿流程
+     *
+     * @param instanceId 草稿实例id
+     * @param variables  表单信息
+     * @return 运行上下文
+     */
+    RuntimeContext saveDraft(String instanceId, Map<String, Object> variables);
+
+    /**
      * 开始草稿流程
      *
      * @param instanceId 草稿实例id

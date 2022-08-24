@@ -15,6 +15,7 @@ import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.exception.DeploymentNotDeployException;
+import top.songjhh.windrunner.core.exception.ProcessInstanceNotDraftException;
 import top.songjhh.windrunner.core.exception.UserTaskTakeBackException;
 
 import java.util.*;
@@ -63,6 +64,18 @@ public class RuntimeServiceImpl implements RuntimeService {
         }
         ProcessInstance processInstance = processService.draftProcessByDeployment(
                 identityService.getEntityByUserId(starter), deployment, variables);
+        return RuntimeContext.getContextByInstance(processInstance, deployment);
+    }
+
+    @Override
+    public RuntimeContext saveDraft(String instanceId, Map<String, Object> variables) {
+        ProcessInstance processInstance = processService.getInstanceById(instanceId);
+        if (processInstance == null || !ProcessStatus.DRAFT.equals(processInstance.getStatus())) {
+            throw new ProcessInstanceNotDraftException();
+        }
+        processInstance.setVariables(variables);
+        processService.save(processInstance);
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         return RuntimeContext.getContextByInstance(processInstance, deployment);
     }
 
