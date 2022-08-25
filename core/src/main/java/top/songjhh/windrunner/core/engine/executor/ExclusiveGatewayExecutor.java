@@ -2,6 +2,7 @@ package top.songjhh.windrunner.core.engine.executor;
 
 import top.songjhh.windrunner.core.engine.identity.IdentityService;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
+import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
 import top.songjhh.windrunner.core.engine.runtime.model.ExclusiveGateway;
 import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
@@ -30,7 +31,7 @@ public class ExclusiveGatewayExecutor extends AbstractFlowNodeExecutor {
                 context.getProcessInstance().getVariables())) {
             return false;
         }
-        
+
         List<SequenceFlow> nextSequenceFlowList = context.findNextSequenceFlows(exclusiveGateway.getOutgoing());
         for (SequenceFlow nextSequenceFlow : nextSequenceFlowList) {
             FlowElement nextFlowNode = context.findNextFlowNode(nextSequenceFlow);
@@ -40,6 +41,9 @@ public class ExclusiveGatewayExecutor extends AbstractFlowNodeExecutor {
                 break;
             }
         }
+        ProcessInstance processInstance = context.getProcessInstance();
+        processInstance.completeNode(exclusiveGateway.getId(), null);
+        processService.save(processInstance);
         return true;
     }
 

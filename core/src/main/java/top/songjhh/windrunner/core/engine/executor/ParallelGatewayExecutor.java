@@ -2,6 +2,7 @@ package top.songjhh.windrunner.core.engine.executor;
 
 import top.songjhh.windrunner.core.engine.identity.IdentityService;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
+import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
 import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
 import top.songjhh.windrunner.core.engine.runtime.model.ParallelGateway;
@@ -29,6 +30,9 @@ public class ParallelGatewayExecutor extends AbstractFlowNodeExecutor {
             return false;
         }
         this.executorNext(context, parallelGateway);
+        ProcessInstance processInstance = context.getProcessInstance();
+        processInstance.completeNode(parallelGateway.getId(), null);
+        processService.save(processInstance);
         return true;
     }
 

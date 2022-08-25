@@ -2,6 +2,7 @@ package top.songjhh.windrunner.core.engine.executor;
 
 import top.songjhh.windrunner.core.engine.identity.IdentityService;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
+import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
 import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
 import top.songjhh.windrunner.core.engine.runtime.model.SequenceFlow;
@@ -26,6 +27,9 @@ public class StartEventExecutor extends AbstractFlowNodeExecutor {
     @Override
     public void doExecute(RuntimeContext context, FlowElement executeElement, Task task) {
         StartEvent startEvent = (StartEvent) executeElement;
+        ProcessInstance processInstance = context.getProcessInstance();
+        processInstance.completeNode(startEvent.getId(), null);
+        processService.save(processInstance);
         executeNext(context, startEvent.getOutgoing());
     }
 }

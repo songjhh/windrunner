@@ -136,6 +136,7 @@ public class RuntimeServiceImpl implements RuntimeService {
             // 回退节点
             processInstance.goBackNode(it.getNodeId());
         }
+        processInstance.reopenNode(userTask.getId());
 
         // 重新生成任务
         userTask.setAssignee(task.getAssignee());

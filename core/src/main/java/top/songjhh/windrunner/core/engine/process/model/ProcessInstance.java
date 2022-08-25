@@ -46,6 +46,10 @@ public class ProcessInstance {
      */
     private Set<String> currentNodeIds;
     /**
+     * 已运行过的节点
+     */
+    private Set<String> finishNodeIds;
+    /**
      * 表单信息
      */
     private Map<String, Object> variables;
@@ -76,6 +80,7 @@ public class ProcessInstance {
         this.name = builder.getName();
         this.startDateTime = builder.getStartDateTime();
         this.currentNodeIds = new HashSet<>();
+        this.finishNodeIds = new HashSet<>();
         this.variables = Optional.ofNullable(builder.getVariables()).orElse(new HashMap<>());
         this.status = builder.getStatus();
         this.starter = builder.getStarter();
@@ -85,16 +90,23 @@ public class ProcessInstance {
     }
 
     public void runNode(String nodeId) {
-        currentNodeIds.add(nodeId);
+        this.currentNodeIds.add(nodeId);
     }
 
     public void completeNode(String nodeId, Map<String, Object> variables) {
-        currentNodeIds.remove(nodeId);
-        this.variables.putAll(variables);
+        this.currentNodeIds.remove(nodeId);
+        this.finishNodeIds.add(nodeId);
+        if (variables != null) {
+            this.variables.putAll(variables);
+        }
     }
 
     public void goBackNode(String nodeId) {
-        currentNodeIds.remove(nodeId);
+        this.currentNodeIds.remove(nodeId);
+    }
+
+    public void reopenNode(String nodeId) {
+        this.finishNodeIds.remove(nodeId);
     }
 
     public void putAllVariables(Map<String, Object> variables) {
