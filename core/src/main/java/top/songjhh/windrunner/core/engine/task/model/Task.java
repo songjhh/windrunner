@@ -180,6 +180,11 @@ public class Task {
         return this;
     }
 
+    public Task takeBack() {
+        this.status = Status.TAKE_BACK;
+        return this;
+    }
+
     public enum Status {
         /**
          * 进行中
@@ -193,6 +198,10 @@ public class Task {
          * 驳回
          */
         REJECT,
+        /**
+         * 拿回
+         */
+        TAKE_BACK,
         /**
          * 中止
          */

@@ -143,6 +143,9 @@ public class RuntimeServiceImpl implements RuntimeService {
         userTask.setAssigneeName(task.getAssigneeName());
         Task newTask = Task.create(processInstance, userTask);
         taskService.save(newTask);
+        // 旧任务设置为拿回
+        task.takeBack();
+        taskService.save(task);
 
         processInstance.runNode(userTask.getId());
         processService.save(processInstance);
