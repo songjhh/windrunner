@@ -8,15 +8,13 @@ import top.songjhh.windrunner.core.engine.process.ProcessService;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.ProcessStatus;
 import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
-import top.songjhh.windrunner.core.engine.runtime.model.FlowElement;
-import top.songjhh.windrunner.core.engine.runtime.model.FlowNode;
-import top.songjhh.windrunner.core.engine.runtime.model.SequenceFlow;
-import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
+import top.songjhh.windrunner.core.engine.runtime.model.*;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.exception.DeploymentNotDeployException;
 import top.songjhh.windrunner.core.exception.ProcessInstanceNotDraftException;
 import top.songjhh.windrunner.core.exception.UserTaskTakeBackException;
+import top.songjhh.windrunner.core.exception.UserTaskTransferException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -144,7 +142,7 @@ public class RuntimeServiceImpl implements RuntimeService {
         Task newTask = Task.create(processInstance, userTask);
         taskService.save(newTask);
         // 旧任务设置为拿回
-        task.takeBack();
+        task = task.takeBack();
         taskService.save(task);
 
         processInstance.runNode(userTask.getId());
@@ -154,19 +152,20 @@ public class RuntimeServiceImpl implements RuntimeService {
         return RuntimeContext.getContextByInstance(processInstance, deployment);
     }
 
-    private void setNextFlowNodeIds(Set<String> flowElementIds, FlowNode flowNode, RuntimeContext runtimeContext) {
-        // 获取任务节点的线
-        List<SequenceFlow> nextSequenceFlows = runtimeContext.findNextSequenceFlows(flowNode.getOutgoing());
-        for (SequenceFlow sequenceFlow : nextSequenceFlows) {
-            FlowElement flowElement = runtimeContext.findNextFlowNode(sequenceFlow);
-            // 如果是网关则继续往下找
-            if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())
-                    || FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
-                setNextFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
-                continue;
-            }
-            flowElementIds.add(flowElement.getId());
+    @Override
+    public RuntimeContext transfer(String taskId, String fromUserId, String toUserId) {
+        Task task = taskService.getById(taskId);
+        ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        
+        UserEntity fromUserEntity = identityService.getEntityByUserId(fromUserId);
+        UserEntity toUserEntity = identityService.getEntityByUserId(toUserId);
+        if (toUserEntity == null) {
+            throw new UserTaskTransferException("can not find toUser");
         }
+        task = task.transfer(fromUserEntity, toUserEntity);
+        taskService.save(task);
+        return RuntimeContext.getContextByInstance(processInstance, deployment);
     }
 
     @Override
@@ -210,5 +209,20 @@ public class RuntimeServiceImpl implements RuntimeService {
                     runtimeContext.getProcessInstance().getInstanceId(), nextFlowNodeId));
         }
         return nextFlowNodeTasks;
+    }
+
+    private void setNextFlowNodeIds(Set<String> flowElementIds, FlowNode flowNode, RuntimeContext runtimeContext) {
+        // 获取任务节点的线
+        List<SequenceFlow> nextSequenceFlows = runtimeContext.findNextSequenceFlows(flowNode.getOutgoing());
+        for (SequenceFlow sequenceFlow : nextSequenceFlows) {
+            FlowElement flowElement = runtimeContext.findNextFlowNode(sequenceFlow);
+            // 如果是网关则继续往下找
+            if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())
+                    || FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
+                setNextFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
+                continue;
+            }
+            flowElementIds.add(flowElement.getId());
+        }
     }
 }

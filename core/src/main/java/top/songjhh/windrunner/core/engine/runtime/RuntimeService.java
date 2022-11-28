@@ -96,6 +96,16 @@ public interface RuntimeService {
     RuntimeContext takeBack(String taskId);
 
     /**
+     * 转办
+     *
+     * @param taskId 任务id
+     * @param fromUserId 转办人id
+     * @param toUserId 被转办人id
+     * @return 运行上下文
+     */
+    RuntimeContext transfer(String taskId, String fromUserId, String toUserId);
+
+    /**
      * 获取列表
      *
      * @param query 查询条件

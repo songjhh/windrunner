@@ -8,7 +8,6 @@ import lombok.Setter;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.runtime.model.UserEntity;
 import top.songjhh.windrunner.core.engine.runtime.model.UserTask;
-import top.songjhh.windrunner.core.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -124,8 +123,6 @@ public class Task {
         this.taskId = NanoIdUtils.randomNanoId();
         this.instanceId = processInstance.getInstanceId();
         this.nodeId = userTask.getId();
-        this.owner = userTask.getAssignee();
-        this.ownerName = userTask.getAssigneeName();
         this.assignee = userTask.getAssignee();
         this.assigneeName = userTask.getAssigneeName();
         this.candidateUsers = userTask.getCandidateUsers();
@@ -155,19 +152,6 @@ public class Task {
         return this;
     }
 
-    private void finishTask(UserEntity assignee, Map<String, Object> variables) {
-        putAllVariables(variables);
-        if (assignee != null) {
-            this.assignee = assignee.getId();
-            this.assigneeName = assignee.getName();
-            if (StringUtils.isEmpty(this.owner)) {
-                this.owner = assignee.getId();
-                this.ownerName = assignee.getName();
-            }
-        }
-        this.endDateTime = LocalDateTime.now();
-    }
-
     public void putAllVariables(Map<String, Object> variables) {
         if (variables != null) {
             this.variables.putAll(variables);
@@ -182,6 +166,21 @@ public class Task {
 
     public Task takeBack() {
         this.status = Status.TAKE_BACK;
+        return this;
+    }
+
+    public Task transfer(UserEntity from, UserEntity to) {
+        if (assignee != null) {
+            this.assignee = to.getId();
+            this.assigneeName = to.getName();
+        } else if (from != null && this.candidateUsers.contains(from.getId())) {
+            int index = this.candidateUsers.indexOf(from.getId());
+            this.candidateUsers.set(index, to.getId());
+            this.candidateUserNames.set(index, to.getName());
+        } else {
+            this.candidateUsers.add(to.getId());
+            this.candidateUserNames.add(to.getName());
+        }
         return this;
     }
 
@@ -206,5 +205,14 @@ public class Task {
          * 中止
          */
         TERMINATED
+    }
+
+    private void finishTask(UserEntity assignee, Map<String, Object> variables) {
+        putAllVariables(variables);
+        if (assignee != null) {
+            this.assignee = assignee.getId();
+            this.assigneeName = assignee.getName();
+        }
+        this.endDateTime = LocalDateTime.now();
     }
 }
