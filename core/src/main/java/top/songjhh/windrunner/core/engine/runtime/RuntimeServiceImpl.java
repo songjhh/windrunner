@@ -15,8 +15,10 @@ import top.songjhh.windrunner.core.exception.DeploymentNotDeployException;
 import top.songjhh.windrunner.core.exception.ProcessInstanceNotDraftException;
 import top.songjhh.windrunner.core.exception.UserTaskTakeBackException;
 import top.songjhh.windrunner.core.exception.UserTaskTransferException;
+import top.songjhh.windrunner.core.util.ConditionExpressionUtils;
 
 import java.util.*;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -95,6 +97,39 @@ public class RuntimeServiceImpl implements RuntimeService {
     }
 
     @Override
+    public RuntimeContext reject(String assignee, String taskId) {
+        Task task = taskService.getById(taskId);
+        ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+        Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
+        UserTask userTask = (UserTask) runtimeContext.findFlowNode(task.getNodeId());
+        UserEntity assigneeEntity = identityService.getEntityByUserId(assignee);
+
+        UserTask previousUserTask = getPreviousUserTask(task, runtimeContext, userTask);
+
+        task.reject(assigneeEntity);
+        taskService.save(task);
+
+        processInstance.goBackNode(task.getNodeId());
+        processInstance.reopenNode(previousUserTask.getId());
+        List<Task> previousTasks = taskService.listTasksByInstanceIdAndNodeId(processInstance.getInstanceId(),
+                previousUserTask.getId());
+        for (Task previousTask : previousTasks) {
+            if (previousTask.getStatus().equals(Task.Status.FINISH)) {
+                previousUserTask.setAssignee(previousTask.getAssignee());
+                previousUserTask.setAssigneeName(previousTask.getAssigneeName());
+                Task newTask = Task.create(processInstance, previousUserTask);
+                taskService.save(newTask);
+            }
+        }
+        processInstance.runNode(previousUserTask.getId());
+        processService.save(processInstance);
+
+        processInstance = processService.getInstanceById(task.getInstanceId());
+        return RuntimeContext.getContextByInstance(processInstance, deployment);
+    }
+
+    @Override
     public RuntimeContext save(String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
         task.setVariables(variables);
@@ -157,7 +192,7 @@ public class RuntimeServiceImpl implements RuntimeService {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
-        
+
         UserEntity fromUserEntity = identityService.getEntityByUserId(fromUserId);
         UserEntity toUserEntity = identityService.getEntityByUserId(toUserId);
         if (toUserEntity == null) {
@@ -223,6 +258,42 @@ public class RuntimeServiceImpl implements RuntimeService {
                 continue;
             }
             flowElementIds.add(flowElement.getId());
+        }
+    }
+
+    private UserTask getPreviousUserTask(Task task, RuntimeContext runtimeContext, UserTask userTask) {
+        boolean checkReject = Task.Status.PROCESSING.equals(task.getStatus())
+                && ProcessStatus.RUNNING.equals(runtimeContext.getProcessInstance().getStatus());
+        Set<String> previousFlowNodeIds = new HashSet<>();
+        setPreviousFlowNodeIds(previousFlowNodeIds, userTask, runtimeContext);
+        if (previousFlowNodeIds.size() != 1) {
+            checkReject = false;
+        }
+        FlowElement flowElement = runtimeContext.findFlowNode(previousFlowNodeIds.iterator().next());
+        if (!flowElement.getType().equals(FlowElement.Type.USER_TASK)) {
+            checkReject = false;
+        }
+        if (!checkReject) {
+            throw new RejectedExecutionException();
+        }
+        return (UserTask) flowElement;
+    }
+
+    private void setPreviousFlowNodeIds(Set<String> flowElementIds, FlowNode flowNode, RuntimeContext runtimeContext) {
+        // 获取任务节点的线
+        List<SequenceFlow> previousSequenceFlows = runtimeContext.findNextSequenceFlows(flowNode.getIncoming());
+        for (SequenceFlow sequenceFlow : previousSequenceFlows) {
+            if (ConditionExpressionUtils.validCondition(sequenceFlow.getConditionExpression(),
+                    runtimeContext.getProcessInstance().getVariables())) {
+                FlowElement flowElement = runtimeContext.findPreviousFlowNode(sequenceFlow);
+                // 如果是网关则继续往上找
+                if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())
+                        || FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
+                    setPreviousFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
+                    continue;
+                }
+                flowElementIds.add(flowElement.getId());
+            }
         }
     }
 }

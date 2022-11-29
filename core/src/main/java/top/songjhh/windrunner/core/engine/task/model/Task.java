@@ -152,6 +152,12 @@ public class Task {
         return this;
     }
 
+    public Task reject(UserEntity assignee) {
+        finishTask(assignee, null);
+        this.status = Status.REJECT;
+        return this;
+    }
+
     public void putAllVariables(Map<String, Object> variables) {
         if (variables != null) {
             this.variables.putAll(variables);

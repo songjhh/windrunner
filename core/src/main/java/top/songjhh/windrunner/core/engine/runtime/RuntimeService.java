@@ -71,6 +71,15 @@ public interface RuntimeService {
     }
 
     /**
+     * 驳回
+     *
+     * @param assignee 驳回人
+     * @param taskId   任务id
+     * @return 运行上下文
+     */
+    RuntimeContext reject(String assignee, String taskId);
+
+    /**
      * 保存
      *
      * @param taskId    任务id
@@ -98,9 +107,9 @@ public interface RuntimeService {
     /**
      * 转办
      *
-     * @param taskId 任务id
+     * @param taskId     任务id
      * @param fromUserId 转办人id
-     * @param toUserId 被转办人id
+     * @param toUserId   被转办人id
      * @return 运行上下文
      */
     RuntimeContext transfer(String taskId, String fromUserId, String toUserId);
