@@ -114,12 +114,15 @@ public class RuntimeServiceImpl implements RuntimeService {
         processInstance.reopenNode(previousUserTask.getId());
         List<Task> previousTasks = taskService.listTasksByInstanceIdAndNodeId(processInstance.getInstanceId(),
                 previousUserTask.getId());
+        previousTasks =
+                previousTasks.stream().sorted(Comparator.comparing(Task::getEndDateTime).reversed()).collect(Collectors.toList());
         for (Task previousTask : previousTasks) {
             if (previousTask.getStatus().equals(Task.Status.FINISH)) {
                 previousUserTask.setAssignee(previousTask.getAssignee());
                 previousUserTask.setAssigneeName(previousTask.getAssigneeName());
                 Task newTask = Task.create(processInstance, previousUserTask);
                 taskService.save(newTask);
+                break;
             }
         }
         processInstance.runNode(previousUserTask.getId());
@@ -264,16 +267,16 @@ public class RuntimeServiceImpl implements RuntimeService {
     private UserTask getPreviousUserTask(Task task, RuntimeContext runtimeContext, UserTask userTask) {
         boolean checkReject = Task.Status.PROCESSING.equals(task.getStatus())
                 && ProcessStatus.RUNNING.equals(runtimeContext.getProcessInstance().getStatus());
+        if (!checkReject) {
+            throw new RejectedExecutionException();
+        }
         Set<String> previousFlowNodeIds = new HashSet<>();
         setPreviousFlowNodeIds(previousFlowNodeIds, userTask, runtimeContext);
         if (previousFlowNodeIds.size() != 1) {
-            checkReject = false;
+            throw new RejectedExecutionException();
         }
         FlowElement flowElement = runtimeContext.findFlowNode(previousFlowNodeIds.iterator().next());
         if (!flowElement.getType().equals(FlowElement.Type.USER_TASK)) {
-            checkReject = false;
-        }
-        if (!checkReject) {
             throw new RejectedExecutionException();
         }
         return (UserTask) flowElement;
@@ -284,7 +287,7 @@ public class RuntimeServiceImpl implements RuntimeService {
         List<SequenceFlow> previousSequenceFlows = runtimeContext.findNextSequenceFlows(flowNode.getIncoming());
         for (SequenceFlow sequenceFlow : previousSequenceFlows) {
             if (ConditionExpressionUtils.validCondition(sequenceFlow.getConditionExpression(),
-                    runtimeContext.getProcessInstance().getVariables())) {
+                    runtimeContext.getProcessInstance().getVariables()) || previousSequenceFlows.size() == 1) {
                 FlowElement flowElement = runtimeContext.findPreviousFlowNode(sequenceFlow);
                 // 如果是网关则继续往上找
                 if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())
