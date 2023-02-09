@@ -54,14 +54,14 @@
     <!-- 需要发布二方包 则打开下列的配置-->
     <distributionManagement>
         <repository>
-            <id>ldsd-repo</id>
+            <id>rdc-releases</id>
             <name>Releases</name>
-            <url>http://nexus.leidishidai.com/repository/maven-releases/</url>
+            <url>https://packages.aliyun.com/maven/repository/2263295-release-6E5YIR/</url>
         </repository>
         <snapshotRepository>
-            <id>ldsd-repo</id>
+            <id>rdc-snapshots</id>
             <name>Snapshot</name>
-            <url>http://nexus.leidishidai.com/repository/maven-snapshots/</url>
+            <url>https://packages.aliyun.com/maven/repository/2263295-snapshot-TbyU57/</url>
         </snapshotRepository>
     </distributionManagement>
 
