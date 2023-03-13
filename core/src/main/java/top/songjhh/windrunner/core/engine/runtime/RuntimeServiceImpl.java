@@ -101,7 +101,7 @@ public class RuntimeServiceImpl implements RuntimeService {
     }
 
     @Override
-    public RuntimeContext reject(String assignee, String taskId) {
+    public RuntimeContext reject(String assignee, String taskId, String rejectMessage) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
@@ -111,7 +111,7 @@ public class RuntimeServiceImpl implements RuntimeService {
 
         UserTask previousUserTask = getPreviousUserTask(task, runtimeContext, userTask);
 
-        task.reject(assigneeEntity);
+        task.reject(assigneeEntity, rejectMessage);
         taskService.save(task);
 
         processInstance.goBackNode(task.getNodeId());

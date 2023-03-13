@@ -80,6 +80,10 @@ public class Task {
      */
     private Task.Status status;
     /**
+     * 驳回信息
+     */
+    private String rejectMessage;
+    /**
      * 表单信息
      */
     private Map<String, Object> variables;
@@ -157,8 +161,9 @@ public class Task {
         return this;
     }
 
-    public Task reject(UserEntity assignee) {
+    public Task reject(UserEntity assignee, String rejectMessage) {
         finishTask(assignee, null);
+        this.rejectMessage = rejectMessage;
         this.status = Status.REJECT;
         return this;
     }

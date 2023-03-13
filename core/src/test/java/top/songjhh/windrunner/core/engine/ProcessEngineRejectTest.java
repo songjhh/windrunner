@@ -71,7 +71,7 @@ class ProcessEngineRejectTest {
         Assertions.assertEquals(1, aTasks.size());
 
         // 驳回
-        runtimeContext = processEngine.getRuntimeService().reject(secondTaskOwnerId, secondUserFirstTask.getTaskId());
+        runtimeContext = processEngine.getRuntimeService().reject(secondTaskOwnerId, secondUserFirstTask.getTaskId(), null);
         Assertions.assertEquals(1, runtimeContext.getProcessInstance().getCurrentNodeIds().size());
         aTasks = processEngine.getTaskService()
                 .listCurrentTasksByUser(firstTaskOwnerId, runtimeContext.getProcessInstance().getInstanceId());

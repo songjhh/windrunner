@@ -73,11 +73,12 @@ public interface RuntimeService {
     /**
      * 驳回
      *
-     * @param assignee 驳回人
-     * @param taskId   任务id
+     * @param assignee      驳回人
+     * @param taskId        任务id
+     * @param rejectMessage 驳回信息
      * @return 运行上下文
      */
-    RuntimeContext reject(String assignee, String taskId);
+    RuntimeContext reject(String assignee, String taskId, String rejectMessage);
 
     /**
      * 保存
