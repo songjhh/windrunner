@@ -15,6 +15,7 @@ import java.util.Map;
 public class ProcessInstanceBuilder {
     private String deploymentId;
     private String name;
+    private String number;
     private Map<String, Object> variables;
     private String starter;
     private String starterName;
@@ -38,6 +39,11 @@ public class ProcessInstanceBuilder {
 
     public ProcessInstanceBuilder setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public ProcessInstanceBuilder setNumber(String number) {
+        this.number = number;
         return this;
     }
 

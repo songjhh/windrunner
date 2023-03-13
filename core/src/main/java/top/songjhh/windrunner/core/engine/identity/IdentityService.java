@@ -9,15 +9,39 @@ import java.util.List;
  */
 public interface IdentityService {
 
+    /**
+     * 通过用户 id 获取姓名
+     *
+     * @param userId 用户 id
+     * @return 姓名
+     */
     String getNameByUserId(String userId);
 
-    List<String> listPlatformsByUser(String user);
+    /**
+     * 查询用户所属的平台列表
+     *
+     * @param userId 用户 id
+     * @return 平台列表
+     */
+    List<String> listPlatformsByUserId(String userId);
 
+    /**
+     * 查询用户所属的组织列表
+     *
+     * @param userId 用户 id
+     * @return 平台列表
+     */
     List<String> getDepartmentByUserId(String userId);
 
+    /**
+     * 获取 User Entity
+     *
+     * @param userId 用户 id
+     * @return User Entity
+     */
     default UserEntity getEntityByUserId(String userId) {
         return UserEntity.builder().id(userId).name(getNameByUserId(userId))
-                .platforms(listPlatformsByUser(userId)).departments(getDepartmentByUserId(userId)).build();
+                .platforms(listPlatformsByUserId(userId)).departments(getDepartmentByUserId(userId)).build();
     }
 
 }

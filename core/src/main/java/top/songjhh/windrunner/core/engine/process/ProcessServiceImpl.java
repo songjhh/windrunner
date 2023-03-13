@@ -1,7 +1,9 @@
 package top.songjhh.windrunner.core.engine.process;
 
 import cc.ldsd.common.bean.web.AdvancedPagedQuery;
+import com.google.gson.Gson;
 import top.songjhh.windrunner.core.engine.deployment.model.Deployment;
+import top.songjhh.windrunner.core.engine.process.executor.ProcessNumberExecutor;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstanceBuilder;
 import top.songjhh.windrunner.core.engine.process.model.ProcessStatus;
@@ -19,9 +21,11 @@ import java.util.Map;
 public class ProcessServiceImpl implements ProcessService {
 
     private final ProcessInstanceRepository processInstanceRepository;
+    private final ProcessNumberExecutor processNumberExecutor;
 
-    public ProcessServiceImpl(ProcessInstanceRepository repository) {
+    public ProcessServiceImpl(ProcessInstanceRepository repository, ProcessNumberExecutor processNumberExecutor) {
         this.processInstanceRepository = repository;
+        this.processNumberExecutor = processNumberExecutor;
     }
 
     @Override
@@ -33,6 +37,10 @@ public class ProcessServiceImpl implements ProcessService {
                 .setVariables(variables)
                 .setStarter(starter)
                 .start();
+
+        processInstance.setNumber(processNumberExecutor.createProcessNumber(
+                new Gson().fromJson(new Gson().toJson(processInstance), ProcessInstance.class)
+        ));
         processInstanceRepository.save(processInstance);
         return processInstance;
     }
@@ -56,6 +64,9 @@ public class ProcessServiceImpl implements ProcessService {
         if (!ProcessStatus.DRAFT.equals(processInstance.getStatus())) {
             throw new ProcessInstanceNotDraftException();
         }
+        processInstance.setNumber(processNumberExecutor.createProcessNumber(
+                new Gson().fromJson(new Gson().toJson(processInstance), ProcessInstance.class)
+        ));
         processInstance.setVariables(variables);
         processInstance.start();
         processInstanceRepository.save(processInstance);
@@ -92,6 +103,5 @@ public class ProcessServiceImpl implements ProcessService {
         processInstance.terminate();
         processInstanceRepository.save(processInstance);
     }
-
 
 }

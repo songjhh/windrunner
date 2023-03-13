@@ -12,6 +12,8 @@ import top.songjhh.windrunner.core.engine.listener.TaskListener;
 import top.songjhh.windrunner.core.engine.listener.TaskListenerFactory;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
 import top.songjhh.windrunner.core.engine.process.ProcessServiceImpl;
+import top.songjhh.windrunner.core.engine.process.executor.LocalProcessNumberExecutor;
+import top.songjhh.windrunner.core.engine.process.executor.ProcessNumberExecutor;
 import top.songjhh.windrunner.core.engine.process.repository.LocalProcessInstanceRepository;
 import top.songjhh.windrunner.core.engine.process.repository.ProcessInstanceRepository;
 import top.songjhh.windrunner.core.engine.runtime.RuntimeService;
@@ -45,7 +47,13 @@ public class BpmnProcessEngineBuilder {
     }
 
     public BpmnProcessEngineBuilder processInstanceRepository(ProcessInstanceRepository repository) {
-        this.processService = new ProcessServiceImpl(repository);
+        this.processService = new ProcessServiceImpl(repository, new LocalProcessNumberExecutor());
+        return this;
+    }
+
+    public BpmnProcessEngineBuilder processInstance(ProcessInstanceRepository repository,
+                                                    ProcessNumberExecutor processNumberExecutor) {
+        this.processService = new ProcessServiceImpl(repository, processNumberExecutor);
         return this;
     }
 
@@ -80,7 +88,8 @@ public class BpmnProcessEngineBuilder {
             this.deploymentService = new DeploymentServiceImpl(new LocalDeploymentRepository());
         }
         if (processService == null) {
-            this.processService = new ProcessServiceImpl(new LocalProcessInstanceRepository());
+            this.processService = new ProcessServiceImpl(
+                    new LocalProcessInstanceRepository(), new LocalProcessNumberExecutor());
         }
         if (taskService == null) {
             this.taskService = new TaskServiceImpl(new LocalTaskRepository());

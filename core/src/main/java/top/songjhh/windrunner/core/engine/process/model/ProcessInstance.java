@@ -32,6 +32,10 @@ public class ProcessInstance {
      */
     private String name;
     /**
+     * 编号
+     */
+    private String number;
+    /**
      * 运行开始时间
      */
     @JacksonDateTimeFormat2Slash
@@ -78,6 +82,7 @@ public class ProcessInstance {
         this.instanceId = NanoIdUtils.randomNanoId();
         this.deploymentId = builder.getDeploymentId();
         this.name = builder.getName();
+        this.number = builder.getNumber();
         this.startDateTime = builder.getStartDateTime();
         this.currentNodeIds = new HashSet<>();
         this.finishNodeIds = new HashSet<>();

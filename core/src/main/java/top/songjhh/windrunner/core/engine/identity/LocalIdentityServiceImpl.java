@@ -13,7 +13,7 @@ public class LocalIdentityServiceImpl implements IdentityService {
     }
 
     @Override
-    public List<String> listPlatformsByUser(String user) {
+    public List<String> listPlatformsByUserId(String user) {
         return new ArrayList<>();
     }
 

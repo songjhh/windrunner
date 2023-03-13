@@ -32,6 +32,10 @@ public class Task {
      */
     private String instanceId;
     /**
+     * 流程运行number
+     */
+    private String instanceNumber;
+    /**
      * 节点id
      */
     private String nodeId;
@@ -122,6 +126,7 @@ public class Task {
     private Task(ProcessInstance processInstance, UserTask userTask) {
         this.taskId = NanoIdUtils.randomNanoId();
         this.instanceId = processInstance.getInstanceId();
+        this.instanceNumber = processInstance.getNumber();
         this.nodeId = userTask.getId();
         this.assignee = userTask.getAssignee();
         this.assigneeName = userTask.getAssigneeName();

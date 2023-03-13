@@ -11,14 +11,39 @@ import top.songjhh.windrunner.core.engine.task.TaskService;
  */
 public interface ProcessEngine {
 
+    /**
+     * 获取部署service
+     *
+     * @return service
+     */
     DeploymentService getDeploymentService();
 
+    /**
+     * 获取部署进程
+     *
+     * @return service
+     */
     ProcessService getProcessService();
 
+    /**
+     * 获取部署任务
+     *
+     * @return service
+     */
     TaskService getTaskService();
 
+    /**
+     * 获取部署认证
+     *
+     * @return service
+     */
     IdentityService getIdentityService();
 
+    /**
+     * 获取部署进行时
+     *
+     * @return service
+     */
     RuntimeService getRuntimeService();
 
 }
