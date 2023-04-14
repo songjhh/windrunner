@@ -11,14 +11,10 @@ import top.songjhh.windrunner.core.engine.process.model.RuntimeContext;
 import top.songjhh.windrunner.core.engine.runtime.model.*;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
-import top.songjhh.windrunner.core.exception.DeploymentNotDeployException;
-import top.songjhh.windrunner.core.exception.ProcessInstanceNotDraftException;
-import top.songjhh.windrunner.core.exception.UserTaskTakeBackException;
-import top.songjhh.windrunner.core.exception.UserTaskTransferException;
+import top.songjhh.windrunner.core.exception.*;
 import top.songjhh.windrunner.core.util.ConditionExpressionUtils;
 
 import java.util.*;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -272,18 +268,24 @@ public class RuntimeServiceImpl implements RuntimeService {
         boolean checkReject = Task.Status.PROCESSING.equals(task.getStatus())
                 && ProcessStatus.RUNNING.equals(runtimeContext.getProcessInstance().getStatus());
         if (!checkReject) {
-            throw new RejectedExecutionException();
+            throw new UserTaskRejectException();
         }
         Set<String> previousFlowNodeIds = new HashSet<>();
         setPreviousFlowNodeIds(previousFlowNodeIds, userTask, runtimeContext);
-        if (previousFlowNodeIds.size() != 1) {
-            throw new RejectedExecutionException();
+
+        List<Task> allTasks = taskService.listTasksByInstanceId(runtimeContext.getProcessInstance().getInstanceId());
+        allTasks = allTasks.stream().filter(t -> t.getEndDateTime() != null)
+                .sorted(Comparator.comparing(Task::getEndDateTime).reversed()).collect(Collectors.toList());
+        for (Task finishTask : allTasks) {
+            if (Task.Status.FINISH.equals(finishTask.getStatus()) && previousFlowNodeIds.contains(finishTask.getNodeId())) {
+                FlowElement flowElement = runtimeContext.findFlowNode(finishTask.getNodeId());
+                if (!flowElement.getType().equals(FlowElement.Type.USER_TASK)) {
+                    throw new UserTaskRejectException();
+                }
+                return (UserTask) flowElement;
+            }
         }
-        FlowElement flowElement = runtimeContext.findFlowNode(previousFlowNodeIds.iterator().next());
-        if (!flowElement.getType().equals(FlowElement.Type.USER_TASK)) {
-            throw new RejectedExecutionException();
-        }
-        return (UserTask) flowElement;
+        throw new UserTaskRejectException();
     }
 
     private void setPreviousFlowNodeIds(Set<String> flowElementIds, FlowNode flowNode, RuntimeContext runtimeContext) {
@@ -293,11 +295,14 @@ public class RuntimeServiceImpl implements RuntimeService {
             if (ConditionExpressionUtils.validCondition(sequenceFlow.getConditionExpression(),
                     runtimeContext.getProcessInstance().getVariables()) || previousSequenceFlows.size() == 1) {
                 FlowElement flowElement = runtimeContext.findPreviousFlowNode(sequenceFlow);
-                // 如果是网关则继续往上找
-                if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())
-                        || FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
+                // 如果是排他网关则继续往上找
+                if (FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
                     setPreviousFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
                     continue;
+                }
+                // 不允许并行网关
+                if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())) {
+                    throw new UserTaskRejectException();
                 }
                 flowElementIds.add(flowElement.getId());
             }
