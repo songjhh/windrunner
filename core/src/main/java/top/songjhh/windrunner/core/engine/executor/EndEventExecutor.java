@@ -30,6 +30,7 @@ public class EndEventExecutor extends AbstractFlowNodeExecutor {
                 .forEach(it -> taskService.save(it.terminate()));
         processInstance.completeNode(endEvent.getId(), null);
         processInstance.complete();
+        processInstance.walkedEdge(incomingSequenceFlow.getId());
         processService.save(processInstance);
         return true;
     }

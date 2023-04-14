@@ -43,6 +43,7 @@ public class ExclusiveGatewayExecutor extends AbstractFlowNodeExecutor {
         }
         ProcessInstance processInstance = context.getProcessInstance();
         processInstance.completeNode(exclusiveGateway.getId(), null);
+        processInstance.walkedEdge(incomingSequenceFlow.getId());
         processService.save(processInstance);
         return true;
     }

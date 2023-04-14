@@ -52,7 +52,11 @@ public class ProcessInstance {
     /**
      * 已运行过的节点
      */
-    private Set<String> finishNodeIds;
+    private LinkedHashSet<String> finishNodeIds;
+    /**
+     * 走过的线
+     */
+    private LinkedHashSet<String> walkedEdgeIds;
     /**
      * 表单信息
      */
@@ -85,7 +89,8 @@ public class ProcessInstance {
         this.number = builder.getNumber();
         this.startDateTime = builder.getStartDateTime();
         this.currentNodeIds = new HashSet<>();
-        this.finishNodeIds = new HashSet<>();
+        this.finishNodeIds = new LinkedHashSet<>();
+        this.walkedEdgeIds = new LinkedHashSet<>();
         this.variables = Optional.ofNullable(builder.getVariables()).orElse(new HashMap<>());
         this.status = builder.getStatus();
         this.starter = builder.getStarter();
@@ -96,6 +101,10 @@ public class ProcessInstance {
 
     public void runNode(String nodeId) {
         this.currentNodeIds.add(nodeId);
+    }
+
+    public void walkedEdge(String edgeId) {
+        this.walkedEdgeIds.add(edgeId);
     }
 
     public void completeNode(String nodeId, Map<String, Object> variables) {

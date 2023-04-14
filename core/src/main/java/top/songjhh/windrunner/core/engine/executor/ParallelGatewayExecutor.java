@@ -32,6 +32,7 @@ public class ParallelGatewayExecutor extends AbstractFlowNodeExecutor {
         this.executorNext(context, parallelGateway);
         ProcessInstance processInstance = context.getProcessInstance();
         processInstance.completeNode(parallelGateway.getId(), null);
+        processInstance.walkedEdge(incomingSequenceFlow.getId());
         processService.save(processInstance);
         return true;
     }

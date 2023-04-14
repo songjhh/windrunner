@@ -54,6 +54,8 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
                 new DelegateTask(processInstance, userTask, task), TaskListenerEventType.AFTER_CREATE));
 
         processInstance.runNode(userTask.getId());
+        assert incomingSequenceFlow != null;
+        processInstance.walkedEdge(incomingSequenceFlow.getId());
         processService.save(processInstance);
         return true;
     }
