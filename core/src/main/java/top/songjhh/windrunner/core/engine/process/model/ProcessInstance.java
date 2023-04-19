@@ -104,6 +104,9 @@ public class ProcessInstance {
     }
 
     public void walkedEdge(String edgeId) {
+        if (this.walkedEdgeIds == null) {
+            this.walkedEdgeIds = new LinkedHashSet<>();
+        }
         this.walkedEdgeIds.add(edgeId);
     }
 
