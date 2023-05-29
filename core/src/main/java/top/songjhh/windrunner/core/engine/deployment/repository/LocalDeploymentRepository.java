@@ -1,8 +1,11 @@
 package top.songjhh.windrunner.core.engine.deployment.repository;
 
+import cc.ldsd.common.bean.web.AdvancedPagedQuery;
 import top.songjhh.windrunner.core.engine.deployment.model.Deployment;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,5 +27,15 @@ public class LocalDeploymentRepository implements DeploymentRepository {
     @Override
     public Deployment getDeploymentById(String deploymentId) {
         return deploymentMap.get(deploymentId);
+    }
+
+    @Override
+    public <T extends AdvancedPagedQuery> List<Deployment> list(T query) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public <T extends AdvancedPagedQuery> long count(T query) {
+        return 0;
     }
 }
