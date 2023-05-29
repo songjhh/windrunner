@@ -68,6 +68,7 @@ public class Deployment {
     }
 
     public void deployed() {
+        this.deploymentDateTime = LocalDateTime.now();
         this.status = Status.DEPLOYED;
     }
 
