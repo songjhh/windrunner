@@ -102,6 +102,10 @@ public class Task {
      */
     private String formKey;
     /**
+     * 是否是内置表单
+     */
+    private Boolean innerForm;
+    /**
      * 发起者
      */
     private String starter;
@@ -143,6 +147,7 @@ public class Task {
         this.variables = Optional.ofNullable(processInstance.getVariables()).orElse(new HashMap<>());
         this.beginDateTime = LocalDateTime.now();
         this.formKey = userTask.getFormKey();
+        this.innerForm = userTask.getInnerForm();
         this.starter = processInstance.getStarter();
         this.starterName = processInstance.getStarterName();
         this.starterPlatforms = processInstance.getStarterPlatforms();

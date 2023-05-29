@@ -16,6 +16,8 @@ public class UserTask extends FlowActivity {
     @Setter
     private String formKey;
     @Setter
+    private Boolean innerForm;
+    @Setter
     private String assignee;
     @Setter
     private String assigneeName;
