@@ -2,6 +2,7 @@ package top.songjhh.windrunner.core.engine.deployment.model;
 
 import cc.ldsd.common.annotation.JacksonDateTimeFormat2Slash;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.Setter;
 import top.songjhh.windrunner.core.engine.runtime.model.DefinitionFileType;
@@ -54,7 +55,7 @@ public class Deployment {
     public static Deployment createDeployment(String deploymentId) {
         Deployment deployment = new Deployment();
         deployment.setDeploymentId(Optional.ofNullable(deploymentId).orElse(NanoIdUtils.randomNanoId()));
-        deployment.setDeploymentDateTime(LocalDateTime.now());
+        deployment.setDeploymentDateTime(Strings.isNullOrEmpty(deploymentId) ? null : LocalDateTime.now());
         return deployment;
     }
 
