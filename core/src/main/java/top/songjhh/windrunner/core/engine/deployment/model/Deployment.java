@@ -9,6 +9,7 @@ import top.songjhh.windrunner.core.engine.runtime.model.StartEvent;
 import top.songjhh.windrunner.core.util.FlowElementUtils;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -45,6 +46,10 @@ public class Deployment {
      * 状态
      */
     private Deployment.Status status;
+    /**
+     * 信息
+     */
+    private Map<String, Object> variables;
 
     public static Deployment createDeployment(String deploymentId) {
         Deployment deployment = new Deployment();

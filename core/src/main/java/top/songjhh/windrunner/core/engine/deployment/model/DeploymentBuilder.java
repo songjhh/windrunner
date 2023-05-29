@@ -3,6 +3,8 @@ package top.songjhh.windrunner.core.engine.deployment.model;
 import top.songjhh.windrunner.core.engine.deployment.DeploymentService;
 import top.songjhh.windrunner.core.engine.runtime.model.DefinitionFileType;
 
+import java.util.Map;
+
 /**
  * @author songjhh
  */
@@ -36,6 +38,11 @@ public class DeploymentBuilder {
 
     public DeploymentBuilder setType(DefinitionFileType type) {
         deployment.setType(type);
+        return this;
+    }
+
+    public DeploymentBuilder setVariables(Map<String, Object> variables) {
+        deployment.setVariables(variables);
         return this;
     }
 
