@@ -51,6 +51,14 @@ public class Deployment {
      * 信息
      */
     private Map<String, Object> variables;
+    /**
+     * 版本标识
+     */
+    private String versionKey;
+    /**
+     * 版本
+     */
+    private Integer versionNumber;
 
     public static Deployment createDeployment(String deploymentId) {
         Deployment deployment = new Deployment();
@@ -73,6 +81,7 @@ public class Deployment {
     }
 
     public void draft() {
+        this.versionKey = this.deploymentId;
         this.status = Status.DRAFT;
     }
 

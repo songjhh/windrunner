@@ -46,6 +46,16 @@ public class DeploymentBuilder {
         return this;
     }
 
+    public DeploymentBuilder setVersionKey(String versionKey) {
+        deployment.setVersionKey(versionKey);
+        return this;
+    }
+
+    public DeploymentBuilder setVersionNumber(Integer versionNumber) {
+        deployment.setVersionNumber(versionNumber);
+        return this;
+    }
+
     public Deployment getDeployment() {
         return deployment;
     }
