@@ -36,6 +36,10 @@ public class Task {
      */
     private String instanceNumber;
     /**
+     * 部署id
+     */
+    private String deploymentId;
+    /**
      * 节点id
      */
     private String nodeId;
@@ -135,6 +139,7 @@ public class Task {
         this.taskId = NanoIdUtils.randomNanoId();
         this.instanceId = processInstance.getInstanceId();
         this.instanceNumber = processInstance.getNumber();
+        this.deploymentId = processInstance.getDeploymentId();
         this.nodeId = userTask.getId();
         this.assignee = userTask.getAssignee();
         this.assigneeName = userTask.getAssigneeName();
