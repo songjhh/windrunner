@@ -193,6 +193,9 @@ public class RuntimeServiceImpl implements RuntimeService {
     @Override
     public RuntimeContext transfer(String taskId, String fromUserId, String toUserId) {
         Task task = taskService.getById(taskId);
+        if (!Task.Status.PROCESSING.equals(task.getStatus())) {
+            throw new UserTaskTransferException("only processing task can transfer");
+        }
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
 
@@ -201,7 +204,12 @@ public class RuntimeServiceImpl implements RuntimeService {
         if (toUserEntity == null) {
             throw new UserTaskTransferException("can not find toUser");
         }
-        task = task.transfer(fromUserEntity, toUserEntity);
+
+        Task newTask = task.copy();
+        newTask.transfer(fromUserEntity, toUserEntity);
+        taskService.save(newTask);
+
+        task.transfered(fromUserEntity);
         taskService.save(task);
         return RuntimeContext.getContextByInstance(processInstance, deployment);
     }

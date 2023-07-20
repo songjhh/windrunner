@@ -2,6 +2,7 @@ package top.songjhh.windrunner.core.engine.task.model;
 
 import cc.ldsd.common.annotation.JacksonDateTimeFormat2Slash;
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -165,17 +166,22 @@ public class Task {
         return new Task(processInstance, userTask);
     }
 
+    public Task copy() {
+        Task newTask = new Gson().fromJson(new Gson().toJson(this), Task.class);
+        newTask.setTaskId(NanoIdUtils.randomNanoId());
+        return newTask;
+    }
+
     public Task complete(UserEntity assignee, Map<String, Object> variables) {
         finishTask(assignee, variables);
         this.status = Status.FINISH;
         return this;
     }
 
-    public Task reject(UserEntity assignee, String rejectMessage) {
+    public void reject(UserEntity assignee, String rejectMessage) {
         finishTask(assignee, null);
         this.rejectMessage = rejectMessage;
         this.status = Status.REJECT;
-        return this;
     }
 
     public void putAllVariables(Map<String, Object> variables) {
@@ -195,7 +201,12 @@ public class Task {
         return this;
     }
 
-    public Task transfer(UserEntity from, UserEntity to) {
+    public void transfered(UserEntity assignee) {
+        finishTask(assignee, null);
+        this.status = Status.TRANSFER;
+    }
+
+    public void transfer(UserEntity from, UserEntity to) {
         if (assignee != null) {
             this.assignee = to.getId();
             this.assigneeName = to.getName();
@@ -207,7 +218,6 @@ public class Task {
             this.candidateUsers.add(to.getId());
             this.candidateUserNames.add(to.getName());
         }
-        return this;
     }
 
     public enum Status {
@@ -230,7 +240,11 @@ public class Task {
         /**
          * 中止
          */
-        TERMINATED
+        TERMINATED,
+        /**
+         * 已转办
+         */
+        TRANSFER
     }
 
     private void finishTask(UserEntity assignee, Map<String, Object> variables) {
