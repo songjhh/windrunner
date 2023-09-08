@@ -12,7 +12,6 @@ import top.songjhh.windrunner.core.engine.runtime.model.*;
 import top.songjhh.windrunner.core.engine.task.TaskService;
 import top.songjhh.windrunner.core.engine.task.model.Task;
 import top.songjhh.windrunner.core.exception.*;
-import top.songjhh.windrunner.core.util.ConditionExpressionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -300,20 +299,17 @@ public class RuntimeServiceImpl implements RuntimeService {
         // 获取任务节点的线
         List<SequenceFlow> previousSequenceFlows = runtimeContext.findNextSequenceFlows(flowNode.getIncoming());
         for (SequenceFlow sequenceFlow : previousSequenceFlows) {
-            if (ConditionExpressionUtils.validCondition(sequenceFlow.getConditionExpression(),
-                    runtimeContext.getProcessInstance().getVariables()) || previousSequenceFlows.size() == 1) {
-                FlowElement flowElement = runtimeContext.findPreviousFlowNode(sequenceFlow);
-                // 如果是排他网关则继续往上找
-                if (FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
-                    setPreviousFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
-                    continue;
-                }
-                // 不允许并行网关
-                if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())) {
-                    throw new UserTaskRejectException();
-                }
-                flowElementIds.add(flowElement.getId());
+            FlowElement flowElement = runtimeContext.findPreviousFlowNode(sequenceFlow);
+            // 如果是排他网关则继续往上找
+            if (FlowElement.Type.EXCLUSIVE_GATEWAY.equals(flowElement.getType())) {
+                setPreviousFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
+                continue;
             }
+            // 不允许并行网关
+            if (FlowElement.Type.PARALLEL_GATEWAY.equals(flowElement.getType())) {
+                throw new UserTaskRejectException();
+            }
+            flowElementIds.add(flowElement.getId());
         }
     }
 }
