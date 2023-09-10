@@ -279,20 +279,55 @@ public class RuntimeServiceImpl implements RuntimeService {
         }
         Set<String> previousFlowNodeIds = new HashSet<>();
         setPreviousFlowNodeIds(previousFlowNodeIds, userTask, runtimeContext);
-
-        List<Task> allTasks = taskService.listTasksByInstanceId(runtimeContext.getProcessInstance().getInstanceId());
+        ProcessInstance processInstance = runtimeContext.getProcessInstance();
+        List<Task> allTasks = taskService.listTasksByInstanceId(processInstance.getInstanceId());
         allTasks = allTasks.stream().filter(t -> t.getEndDateTime() != null)
                 .sorted(Comparator.comparing(Task::getEndDateTime).reversed()).collect(Collectors.toList());
+        List<FlowElement> satisfyFlowElements = new ArrayList<>();
         for (Task finishTask : allTasks) {
             if (Task.Status.FINISH.equals(finishTask.getStatus()) && previousFlowNodeIds.contains(finishTask.getNodeId())) {
                 FlowElement flowElement = runtimeContext.findFlowNode(finishTask.getNodeId());
                 if (!flowElement.getType().equals(FlowElement.Type.USER_TASK)) {
                     throw new UserTaskRejectException();
                 }
-                return (UserTask) flowElement;
+                satisfyFlowElements.add(flowElement);
             }
         }
-        throw new UserTaskRejectException();
+        if (satisfyFlowElements.isEmpty()) {
+            throw new UserTaskRejectException();
+        }
+        if (satisfyFlowElements.size() == 1) {
+            return (UserTask) satisfyFlowElements.get(0);
+        }
+        return getPreviousUserTaskNotInCircle(runtimeContext, userTask, satisfyFlowElements);
+    }
+
+    private UserTask getPreviousUserTaskNotInCircle(RuntimeContext runtimeContext, UserTask userTask,
+                                                    List<FlowElement> satisfyFlowElements) {
+        Set<String> nextFlowNodeIds = new HashSet<>();
+        setAllNextFlowNodeIds(nextFlowNodeIds, userTask, runtimeContext);
+        FlowElement flowElement =
+                satisfyFlowElements.stream()
+                        .filter(element -> !nextFlowNodeIds.contains(element.getId())).findFirst().orElse(null);
+        if (flowElement != null) {
+            return (UserTask) flowElement;
+        } else {
+            return (UserTask) satisfyFlowElements.get(0);
+        }
+    }
+
+    private void setAllNextFlowNodeIds(Set<String> flowElementIds, FlowNode flowNode,
+                                       RuntimeContext runtimeContext) {
+        // 获取任务节点的线
+        List<SequenceFlow> nextSequenceFlows = runtimeContext.findNextSequenceFlows(flowNode.getOutgoing());
+        for (SequenceFlow sequenceFlow : nextSequenceFlows) {
+            FlowElement flowElement = runtimeContext.findNextFlowNode(sequenceFlow);
+            if (flowElementIds.contains(flowElement.getId())) {
+                continue;
+            }
+            flowElementIds.add(flowElement.getId());
+            setAllNextFlowNodeIds(flowElementIds, (FlowNode) flowElement, runtimeContext);
+        }
     }
 
     private void setPreviousFlowNodeIds(Set<String> flowElementIds, FlowNode flowNode, RuntimeContext runtimeContext) {
