@@ -90,6 +90,19 @@ public class RuntimeServiceImpl implements RuntimeService {
     public RuntimeContext commit(String assignee, String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+        if (!Task.Status.PROCESSING.equals(task.getStatus())) {
+            throw new ProcessEngineException("该任务已完成/终止，请勿重复提交");
+        }
+        if (ProcessStatus.COMPLETED.equals(processInstance.getStatus()) || ProcessStatus.TERMINATED.equals(processInstance.getStatus())) {
+            task.terminate();
+            taskService.save(task);
+            throw new ProcessEngineException("该流程已完成/终止，任务将标记终止");
+        }
+        if (!processInstance.getCurrentNodeIds().contains(task.getNodeId())) {
+            task.terminate();
+            taskService.save(task);
+            throw new ProcessEngineException("流程出现异常，任务将标记终止");
+        }
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
         return runtimeContext.commit(task.complete(identityService.getEntityByUserId(assignee), variables));
