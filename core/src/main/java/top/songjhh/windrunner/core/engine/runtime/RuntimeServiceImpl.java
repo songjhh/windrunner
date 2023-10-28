@@ -3,7 +3,10 @@ package top.songjhh.windrunner.core.engine.runtime;
 import cc.ldsd.common.bean.web.AdvancedPagedQuery;
 import top.songjhh.windrunner.core.engine.deployment.DeploymentService;
 import top.songjhh.windrunner.core.engine.deployment.model.Deployment;
+import top.songjhh.windrunner.core.engine.executor.UserTaskExecutor;
 import top.songjhh.windrunner.core.engine.identity.IdentityService;
+import top.songjhh.windrunner.core.engine.listener.DelegateTask;
+import top.songjhh.windrunner.core.engine.listener.TaskListenerEventType;
 import top.songjhh.windrunner.core.engine.process.ProcessService;
 import top.songjhh.windrunner.core.engine.process.model.ProcessInstance;
 import top.songjhh.windrunner.core.engine.process.model.ProcessStatus;
@@ -90,19 +93,9 @@ public class RuntimeServiceImpl implements RuntimeService {
     public RuntimeContext commit(String assignee, String taskId, Map<String, Object> variables) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
-        if (!Task.Status.PROCESSING.equals(task.getStatus())) {
-            throw new ProcessEngineException("该任务已完成/终止，请勿重复提交");
-        }
-        if (ProcessStatus.COMPLETED.equals(processInstance.getStatus()) || ProcessStatus.TERMINATED.equals(processInstance.getStatus())) {
-            task.terminate();
-            taskService.save(task);
-            throw new ProcessEngineException("该流程已完成/终止，任务将标记终止");
-        }
-        if (!processInstance.getCurrentNodeIds().contains(task.getNodeId())) {
-            task.terminate();
-            taskService.save(task);
-            throw new ProcessEngineException("流程出现异常，任务将标记终止");
-        }
+
+        checkTask(task, processInstance);
+
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
         return runtimeContext.commit(task.complete(identityService.getEntityByUserId(assignee), variables));
@@ -112,6 +105,9 @@ public class RuntimeServiceImpl implements RuntimeService {
     public RuntimeContext reject(String assignee, String taskId, String rejectMessage) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+
+        checkTask(task, processInstance);
+
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
         UserTask userTask = (UserTask) runtimeContext.findFlowNode(task.getNodeId());
@@ -132,8 +128,15 @@ public class RuntimeServiceImpl implements RuntimeService {
             if (previousTask.getStatus().equals(Task.Status.FINISH)) {
                 previousUserTask.setAssignee(previousTask.getAssignee());
                 previousUserTask.setAssigneeName(previousTask.getAssigneeName());
+
+                UserTaskExecutor.notifyTaskEvent(userTask.getTaskListenerEvents(),
+                        new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
+
                 Task newTask = Task.create(processInstance, previousUserTask);
                 taskService.save(newTask);
+
+                UserTaskExecutor.notifyTaskEvent(userTask.getTaskListenerEvents(),
+                        new DelegateTask(processInstance, userTask, newTask), TaskListenerEventType.AFTER_CREATE);
                 break;
             }
         }
@@ -168,6 +171,9 @@ public class RuntimeServiceImpl implements RuntimeService {
     public RuntimeContext takeBack(String taskId) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
+
+        checkTask(task, processInstance);
+
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
         UserTask userTask = (UserTask) runtimeContext.findFlowNode(task.getNodeId());
@@ -210,6 +216,8 @@ public class RuntimeServiceImpl implements RuntimeService {
         }
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
+        RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
+        UserTask userTask = (UserTask) runtimeContext.findFlowNode(task.getNodeId());
 
         UserEntity fromUserEntity = identityService.getEntityByUserId(fromUserId);
         UserEntity toUserEntity = identityService.getEntityByUserId(toUserId);
@@ -219,7 +227,12 @@ public class RuntimeServiceImpl implements RuntimeService {
 
         Task newTask = task.copy();
         newTask.transfer(fromUserEntity, toUserEntity);
+
+        UserTaskExecutor.notifyTaskEvent(userTask.getTaskListenerEvents(),
+                new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
         taskService.save(newTask);
+        UserTaskExecutor.notifyTaskEvent(userTask.getTaskListenerEvents(),
+                new DelegateTask(processInstance, userTask, newTask), TaskListenerEventType.AFTER_CREATE);
 
         task.transfered(fromUserEntity);
         taskService.save(task);
@@ -358,6 +371,22 @@ public class RuntimeServiceImpl implements RuntimeService {
                 throw new UserTaskRejectException();
             }
             flowElementIds.add(flowElement.getId());
+        }
+    }
+
+    private void checkTask(Task task, ProcessInstance processInstance) {
+        if (!Task.Status.PROCESSING.equals(task.getStatus())) {
+            throw new ProcessEngineException("该任务已完成/终止，请勿重复提交");
+        }
+        if (ProcessStatus.COMPLETED.equals(processInstance.getStatus()) || ProcessStatus.TERMINATED.equals(processInstance.getStatus())) {
+            task.terminate();
+            taskService.save(task);
+            throw new ProcessEngineException("该流程已完成/终止，任务将标记终止");
+        }
+        if (!processInstance.getCurrentNodeIds().contains(task.getNodeId())) {
+            task.terminate();
+            taskService.save(task);
+            throw new ProcessEngineException("流程出现异常，任务将标记终止");
         }
     }
 }

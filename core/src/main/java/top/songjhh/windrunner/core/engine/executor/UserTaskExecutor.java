@@ -46,7 +46,7 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         }
 
         this.resolveExpression(context.getProcessInstance(), userTask);
-        this.notifyTaskEvent(userTask.getTaskListenerEvents(),
+        notifyTaskEvent(userTask.getTaskListenerEvents(),
                 new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
 
         List<Task> tasks = this.createTasks(processInstance, userTask);
@@ -76,7 +76,7 @@ public class UserTaskExecutor extends AbstractFlowNodeExecutor {
         }
     }
 
-    private void notifyTaskEvent(List<UserTask.TaskListenerEvent> taskListenerEvents,
+    public static void notifyTaskEvent(List<UserTask.TaskListenerEvent> taskListenerEvents,
                                  DelegateTask delegateTask,
                                  TaskListenerEventType eventType) {
         List<String> eventNames = taskListenerEvents.stream()
