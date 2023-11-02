@@ -129,14 +129,14 @@ public class RuntimeServiceImpl implements RuntimeService {
                 previousUserTask.setAssignee(previousTask.getAssignee());
                 previousUserTask.setAssigneeName(previousTask.getAssigneeName());
 
-                UserTaskExecutor.notifyTaskEvent(userTask.getTaskListenerEvents(),
-                        new DelegateTask(processInstance, userTask, null), TaskListenerEventType.CREATE);
+                UserTaskExecutor.notifyTaskEvent(previousUserTask.getTaskListenerEvents(),
+                        new DelegateTask(processInstance, previousUserTask, null), TaskListenerEventType.CREATE);
 
                 Task newTask = Task.create(processInstance, previousUserTask);
                 taskService.save(newTask);
 
-                UserTaskExecutor.notifyTaskEvent(userTask.getTaskListenerEvents(),
-                        new DelegateTask(processInstance, userTask, newTask), TaskListenerEventType.AFTER_CREATE);
+                UserTaskExecutor.notifyTaskEvent(previousUserTask.getTaskListenerEvents(),
+                        new DelegateTask(processInstance, previousUserTask, newTask), TaskListenerEventType.AFTER_CREATE);
                 break;
             }
         }
@@ -171,8 +171,6 @@ public class RuntimeServiceImpl implements RuntimeService {
     public RuntimeContext takeBack(String taskId) {
         Task task = taskService.getById(taskId);
         ProcessInstance processInstance = processService.getInstanceById(task.getInstanceId());
-
-        checkTask(task, processInstance);
 
         Deployment deployment = deploymentService.getDeploymentById(processInstance.getDeploymentId());
         RuntimeContext runtimeContext = RuntimeContext.getContextByInstance(processInstance, deployment);
